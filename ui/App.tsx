@@ -9,6 +9,9 @@ import styled, { ThemeProvider } from "styled-components";
 import AppStateProvider from "./components/AppStateProvider";
 import LeftNav from "./components/LeftNav";
 import theme, { GlobalStyle } from "./lib/theme";
+import { PageRoutes, prefixRoute } from "./lib/util";
+import HelmRelease from "./pages/HelmRelease";
+import HelmReleaseDetail from "./pages/HelmReleaseDetail";
 import KustomizationDetail from "./pages/KustomizationDetail";
 import Kustomizations from "./pages/Kustomizations";
 import Redirector from "./pages/Redirector";
@@ -63,6 +66,16 @@ export default function App() {
                     exact
                     path="/:context/sources/:sourceType/:sourceId"
                     component={SourceDetail}
+                  />
+                  <Route
+                    exact
+                    path={prefixRoute(PageRoutes.HelmReleases)}
+                    component={HelmRelease}
+                  />
+                  <Route
+                    exact
+                    path={prefixRoute(PageRoutes.HelmReleases, "helmReleaseId")}
+                    component={HelmReleaseDetail}
                   />
                   <Route exact path="*" component={() => <p>404</p>} />
                 </Switch>

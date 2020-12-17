@@ -14,3 +14,9 @@ export const wrappedFetch = (url, opts: RequestInit = {}) => {
 export const normalizePath = (pathname) => {
   return _.tail(pathname.split("/"));
 };
+export const prefixRoute = (route: string, idParam?: string) =>
+  `/:context/${route}${idParam ? "/:" + idParam : ""}`;
+
+export enum PageRoutes {
+  HelmReleases = "helm_releases",
+}

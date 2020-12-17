@@ -7,6 +7,7 @@ import { AppContext } from "../components/AppStateProvider";
 import {
   Context,
   DefaultClusters,
+  HelmRelease,
   Kustomization,
   Source,
 } from "./rpc/clusters";
@@ -101,4 +102,27 @@ export function useSources(sourceType: SourceType): Source[] {
   }, [currentContext, sourceType]);
 
   return sources[sourceType];
+}
+
+export function useHelmReleases(): HelmRelease[] {
+  const [helmReleases, setHelmReleases] = useState([]);
+
+  const { currentContext } = useKubernetesContexts();
+
+  useEffect(() => {
+    if (!currentContext) {
+      return;
+    }
+
+    clusters
+      .listHelmReleases({
+        contextname: currentContext,
+      })
+      .then((res) => {
+        setHelmReleases(res.helmReleases);
+      })
+      .catch((e) => console.error(e));
+  }, [currentContext]);
+
+  return helmReleases;
 }

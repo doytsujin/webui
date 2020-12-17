@@ -262,12 +262,73 @@ const JSONToListSourcesRes = (m: ListSourcesRes | ListSourcesResJSON): ListSourc
     };
 };
 
+export interface HelmRelease {
+    name: string;
+    namespace: string;
+    
+}
+
+interface HelmReleaseJSON {
+    name: string;
+    namespace: string;
+    
+}
+
+
+const JSONToHelmRelease = (m: HelmRelease | HelmReleaseJSON): HelmRelease => {
+    
+    return {
+        name: m.name,
+        namespace: m.namespace,
+        
+    };
+};
+
+export interface ListHelmReleasesReq {
+    contextname: string;
+    
+}
+
+interface ListHelmReleasesReqJSON {
+    contextName: string;
+    
+}
+
+
+const ListHelmReleasesReqToJSON = (m: ListHelmReleasesReq): ListHelmReleasesReqJSON => {
+    return {
+        contextName: m.contextname,
+        
+    };
+};
+
+export interface ListHelmReleasesRes {
+    helmReleases: HelmRelease[];
+    
+}
+
+interface ListHelmReleasesResJSON {
+    helm_releases: HelmReleaseJSON[];
+    
+}
+
+
+const JSONToListHelmReleasesRes = (m: ListHelmReleasesRes | ListHelmReleasesResJSON): ListHelmReleasesRes => {
+    
+    return {
+        helmReleases: ((((m as ListHelmReleasesRes).helmReleases) ? (m as ListHelmReleasesRes).helmReleases : (m as ListHelmReleasesResJSON).helm_releases) as (HelmRelease | HelmReleaseJSON)[]).map(JSONToHelmRelease),
+        
+    };
+};
+
 export interface Clusters {
     listContexts: (listContextsReq: ListContextsReq) => Promise<ListContextsRes>;
     
     listKustomizations: (listKustomizationsReq: ListKustomizationsReq) => Promise<ListKustomizationsRes>;
     
     listSources: (listSourcesReq: ListSourcesReq) => Promise<ListSourcesRes>;
+    
+    listHelmReleases: (listHelmReleasesReq: ListHelmReleasesReq) => Promise<ListHelmReleasesRes>;
     
 }
 
@@ -324,6 +385,21 @@ export class DefaultClusters implements Clusters {
             }
 
             return resp.json().then(JSONToListSourcesRes);
+        });
+    }
+    
+    listHelmReleases(listHelmReleasesReq: ListHelmReleasesReq): Promise<ListHelmReleasesRes> {
+        const url = this.hostname + this.pathPrefix + "ListHelmReleases";
+        let body: ListHelmReleasesReq | ListHelmReleasesReqJSON = listHelmReleasesReq;
+        if (!this.writeCamelCase) {
+            body = ListHelmReleasesReqToJSON(listHelmReleasesReq);
+        }
+        return this.fetch(createTwirpRequest(url, body)).then((resp) => {
+            if (!resp.ok) {
+                return throwTwirpError(resp);
+            }
+
+            return resp.json().then(JSONToListHelmReleasesRes);
         });
     }
     
