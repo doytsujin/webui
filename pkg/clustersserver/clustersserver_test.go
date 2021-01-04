@@ -58,6 +58,15 @@ var _ = Describe("clustersserver", func() {
 				Name:      name,
 				Namespace: "default",
 			},
+			Spec: helmv2.HelmReleaseSpec{
+				Chart: helmv2.HelmChartTemplate{
+					Spec: helmv2.HelmChartTemplateSpec{
+						SourceRef: helmv2.CrossNamespaceObjectReference{
+							Name: name,
+						},
+					},
+				},
+			},
 		}
 
 		err = testclient.Create(context.Background(), hr)

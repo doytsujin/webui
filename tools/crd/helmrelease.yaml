@@ -1,467 +1,631 @@
 ---
-apiVersion: apiextensions.k8s.io/v1beta1
+apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: helmreleases.helm.fluxcd.io
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.3.0
+  creationTimestamp: null
+  name: helmreleases.helm.toolkit.fluxcd.io
 spec:
-  additionalPrinterColumns:
-    - JSONPath: .status.releaseName
-      name: Release
-      type: string
-      description:
-        ReleaseName is the name of the Helm release managed by the HelmRelease,
-        as given by Helm.
-    - JSONPath: .status.phase
-      name: Phase
-      type: string
-      description: Phase is the current release phase being performed for the HelmRelease.
-    - JSONPath: .status.releaseStatus
-      name: Status
-      type: string
-      description:
-        ReleaseStatus is the status of the Helm release managed by the HelmRelease,
-        as given by Helm.
-    - JSONPath: .status.conditions[?(@.type=="Released")].message
-      name: Message
-      type: string
-    - JSONPath: .metadata.creationTimestamp
-      description:
-        CreationTimestamp is a timestamp representing the server time when
-        this object was created. It is not guaranteed to be set in happens-before order
-        across separate operations. Clients may not set this value. It is represented
-        in RFC3339 form and is in UTC.
-      name: Age
-      type: date
-  group: helm.fluxcd.io
+  group: helm.toolkit.fluxcd.io
   names:
     kind: HelmRelease
     listKind: HelmReleaseList
     plural: helmreleases
     shortNames:
       - hr
-      - hrs
     singular: helmrelease
   scope: Namespaced
-  subresources:
-    status: {}
-  validation:
-    openAPIV3Schema:
-      description: HelmRelease is a type to represent a Helm release.
-      type: object
-      required:
-        - metadata
-        - spec
-      properties:
-        apiVersion:
-          description:
-            "APIVersion defines the versioned schema of this representation
-            of an object. Servers should convert recognized schemas to the latest
-            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources"
-          type: string
-        kind:
-          description:
-            "Kind is a string value representing the REST resource this
-            object represents. Servers may infer this from the endpoint the client
-            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds"
-          type: string
-        metadata:
-          type: object
-        spec:
-          type: object
-          required:
-            - chart
-          properties:
-            chart:
-              type: object
-              properties:
-                chartPullSecret:
-                  description:
-                    ChartPullSecret holds the reference to the authentication
-                    secret for accessing the Helm repository using HTTPS basic auth.
-                    NOT IMPLEMENTED!
-                  type: object
-                  required:
-                    - name
-                  properties:
-                    name:
-                      type: string
-                git:
-                  description:
-                    Git URL is the URL of the Git repository, e.g. `git@github.com:org/repo`,
-                    `http://github.com/org/repo`, or `ssh://git@example.com:2222/org/repo.git`.
-                  type: string
-                name:
-                  description:
-                    Name is the name of the Helm chart _without_ an alias,
-                    e.g. redis (for `helm upgrade [flags] stable/redis`).
-                  type: string
-                path:
-                  description:
-                    Path is the path to the chart relative to the repository
-                    root.
-                  type: string
-                ref:
-                  description:
-                    Ref is the Git branch (or other reference) to use.
-                    Defaults to 'master', or the configured default Git ref.
-                  type: string
-                repository:
-                  description:
-                    RepoURL is the URL of the Helm repository, e.g. `https://kubernetes-charts.storage.googleapis.com`
-                    or `https://charts.example.com`.
-                  type: string
-                secretRef:
-                  description:
-                    SecretRef holds the authentication secret for accessing
-                    the Git repository (over HTTPS). The credentials will be added
-                    to an HTTPS GitURL before the mirror is started.
-                  type: object
-                  required:
-                    - name
-                  properties:
-                    name:
-                      type: string
-                    namespace:
-                      type: string
-                skipDepUpdate:
-                  description:
-                    SkipDepUpdate will tell the operator to skip running
-                    'helm dep update' before installing or upgrading the chart, the
-                    chart dependencies _must_ be present for this to succeed.
-                  type: boolean
-                version:
-                  description: Version is the targeted Helm chart version, e.g. 7.0.1.
-                  type: string
-            disableOpenAPIValidation:
-              description:
-                DisableOpenAPIValidation controls whether OpenAPI validation
-                is enforced.
-              type: boolean
-            forceUpgrade:
-              description:
-                Force will mark this Helm release to `--force` upgrades.
-                This forces the resource updates through delete/recreate if needed.
-              type: boolean
-            helmVersion:
-              description:
-                'HelmVersion is the version of Helm to target. If not supplied,
-                the lowest _enabled Helm version_ will be targeted. Valid HelmVersion
-                values are: "v2", "v3"'
-              type: string
-              enum:
-                - v2
-                - v3
-            maxHistory:
-              description:
-                MaxHistory is the maximum amount of revisions to keep for
-                the Helm release. If not supplied, it defaults to 10.
-              type: integer
-            releaseName:
-              description:
-                ReleaseName is the name of the The Helm release. If not
-                supplied, it will be generated by affixing the namespace to the resource
-                name.
-              type: string
-            resetValues:
-              description:
-                ResetValues will mark this Helm release to reset the values
-                to the defaults of the targeted chart before performing an upgrade.
-                Not explicitly setting this to `false` equals to `true` due to the
-                declarative nature of the operator.
-              type: boolean
-            rollback:
-              description: The rollback settings for this Helm release.
-              type: object
-              properties:
-                disableHooks:
-                  description:
-                    DisableHooks will mark this Helm release to prevent
-                    hooks from running during the rollback.
-                  type: boolean
-                enable:
-                  description: Enable will mark this Helm release for rollbacks.
-                  type: boolean
-                force:
-                  description:
-                    Force will mark this Helm release to `--force` rollbacks.
-                    This forces the resource updates through delete/recreate if needed.
-                  type: boolean
-                maxRetries:
-                  description:
-                    MaxRetries is the maximum amount of upgrade retries
-                    the operator should make before bailing.
-                  type: integer
-                  format: int64
-                recreate:
-                  description:
-                    Recreate will mark this Helm release to `--recreate-pods`
-                    for if applicable. This performs pod restarts.
-                  type: boolean
-                retry:
-                  description:
-                    Retry will mark this Helm release for upgrade retries
-                    after a rollback.
-                  type: boolean
-                timeout:
-                  description:
-                    Timeout is the time to wait for any individual Kubernetes
-                    operation (like Jobs for hooks) during rollback.
-                  type: integer
-                  format: int64
-                wait:
-                  description:
-                    Wait will mark this Helm release to wait until all
-                    Pods, PVCs, Services, and minimum number of Pods of a Deployment,
-                    StatefulSet, or ReplicaSet are in a ready state before marking
-                    the release as successful.
-                  type: boolean
-            skipCRDs:
-              description:
-                SkipCRDs will mark this Helm release to skip the creation
-                of CRDs during a Helm 3 installation.
-              type: boolean
-            targetNamespace:
-              description:
-                TargetNamespace overrides the targeted namespace for the
-                Helm release. The default namespace equals to the namespace of the
-                HelmRelease resource.
-              type: string
-            test:
-              description: The test settings for this Helm release.
-              type: object
-              properties:
-                cleanup:
-                  description:
-                    Cleanup, when targeting Helm 2, determines whether
-                    to delete test pods between each test run initiated by the Helm
-                    Operator.
-                  type: boolean
-                enable:
-                  description: Enable will mark this Helm release for tests.
-                  type: boolean
-                ignoreFailures:
-                  description:
-                    IgnoreFailures will cause a Helm release to be rolled
-                    back if it fails otherwise it will be left in a released state
-                  type: boolean
-                timeout:
-                  description:
-                    Timeout is the time to wait for any individual Kubernetes
-                    operation (like Jobs for hooks) during test.
-                  type: integer
-                  format: int64
-            timeout:
-              description:
-                Timeout is the time to wait for any individual Kubernetes
-                operation (like Jobs for hooks) during installation and upgrade operations.
-              type: integer
-              format: int64
-            valueFileSecrets:
-              description:
-                ValueFileSecrets holds the local name references to secrets.
-                DEPRECATED, use ValuesFrom.secretKeyRef instead.
-              type: array
-              items:
-                type: object
-                required:
-                  - name
-                properties:
-                  name:
-                    type: string
-            values:
-              description: Values holds the values for this Helm release.
-              type: object
-            valuesFrom:
-              type: array
-              items:
-                type: object
-                properties:
-                  chartFileRef:
-                    description:
-                      The reference to a local chart file with release
-                      values.
-                    type: object
-                    required:
-                      - path
-                    properties:
-                      optional:
-                        description:
-                          Optional will mark this ChartFileSelector as
-                          optional. The result of this are that operations are permitted
-                          without the source, due to it e.g. being temporarily unavailable.
-                        type: boolean
-                      path:
-                        description:
-                          Path is the file path to the source relative
-                          to the chart root.
-                        type: string
-                  configMapKeyRef:
-                    description: The reference to a config map with release values.
-                    type: object
-                    required:
-                      - name
-                    properties:
-                      key:
-                        type: string
-                      name:
-                        type: string
-                      namespace:
-                        type: string
-                      optional:
-                        type: boolean
-                  externalSourceRef:
-                    description:
-                      The reference to an external source with release
-                      values.
-                    type: object
-                    required:
-                      - url
-                    properties:
-                      optional:
-                        description:
-                          Optional will mark this ExternalSourceSelector
-                          as optional. The result of this are that operations are
-                          permitted without the source, due to it e.g. being temporarily
-                          unavailable.
-                        type: boolean
-                      url:
-                        description: URL is the URL of the external source.
-                        type: string
-                  secretKeyRef:
-                    description: The reference to a secret with release values.
-                    type: object
-                    required:
-                      - name
-                    properties:
-                      key:
-                        type: string
-                      name:
-                        type: string
-                      namespace:
-                        type: string
-                      optional:
-                        type: boolean
-            wait:
-              description:
-                Wait will mark this Helm release to wait until all Pods,
-                PVCs, Services, and minimum number of Pods of a Deployment, StatefulSet,
-                or ReplicaSet are in a ready state before marking the release as successful.
-              type: boolean
-        status:
-          description: HelmReleaseStatus contains status information about an HelmRelease.
-          type: object
-          properties:
-            conditions:
-              description:
-                Conditions contains observations of the resource's state,
-                e.g., has the chart which it refers to been fetched.
-              type: array
-              items:
-                type: object
-                required:
-                  - status
-                  - type
-                properties:
-                  lastTransitionTime:
-                    description:
-                      LastTransitionTime is the timestamp corresponding
-                      to the last status change of this condition.
-                    type: string
-                    format: date-time
-                  lastUpdateTime:
-                    description:
-                      LastUpdateTime is the timestamp corresponding to
-                      the last status update of this condition.
-                    type: string
-                    format: date-time
-                  message:
-                    description:
-                      Message is a human readable description of the details
-                      of the last transition, complementing reason.
-                    type: string
-                  reason:
-                    description:
-                      Reason is a brief machine readable explanation for
-                      the condition's last transition.
-                    type: string
-                  status:
-                    description:
-                      Status of the condition, one of ('True', 'False',
-                      'Unknown').
-                    type: string
-                    enum:
-                      - "True"
-                      - "False"
-                      - Unknown
-                  type:
-                    description:
-                      Type of the condition, one of ('ChartFetched', 'Deployed',
-                      'Released', 'RolledBack', 'Tested').
-                    type: string
-                    enum:
-                      - ChartFetched
-                      - Deployed
-                      - Released
-                      - RolledBack
-                      - Tested
-            lastAttemptedRevision:
-              description:
-                LastAttemptedRevision is the revision of the latest chart
-                sync, and may be of a failed release.
-              type: string
-            observedGeneration:
-              description:
-                ObservedGeneration is the most recent generation observed
-                by the operator.
-              type: integer
-              format: int64
-            phase:
-              description:
-                Phase the release is in, one of ('ChartFetched', 'ChartFetchFailed',
-                'Installing', 'Upgrading', 'Deployed', 'DeployFailed', 'Testing',
-                'TestFailed', 'Tested', 'Succeeded', 'RollingBack', 'RolledBack',
-                'RollbackFailed')
-              type: string
-              enum:
-                - ChartFetched
-                - ChartFetchFailed
-                - Installing
-                - Upgrading
-                - Deployed
-                - DeployFailed
-                - Testing
-                - TestFailed
-                - Tested
-                - Succeeded
-                - Failed
-                - RollingBack
-                - RolledBack
-                - RollbackFailed
-            releaseName:
-              description: ReleaseName is the name as either supplied or generated.
-              type: string
-            releaseStatus:
-              description:
-                ReleaseStatus is the status as given by Helm for the release
-                managed by this resource.
-              type: string
-            revision:
-              description:
-                Revision holds the Git hash or version of the chart currently
-                deployed.
-              type: string
-            rollbackCount:
-              description:
-                RollbackCount records the amount of rollback attempts made,
-                it is incremented after a rollback failure and reset after a successful
-                upgrade or revision change.
-              type: integer
-              format: int64
-  version: v1
   versions:
-    - name: v1
+    - additionalPrinterColumns:
+        - jsonPath: .status.conditions[?(@.type=="Ready")].status
+          name: Ready
+          type: string
+        - jsonPath: .status.conditions[?(@.type=="Ready")].message
+          name: Status
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      name: v2beta1
+      schema:
+        openAPIV3Schema:
+          description: HelmRelease is the Schema for the helmreleases API
+          properties:
+            apiVersion:
+              description:
+                "APIVersion defines the versioned schema of this representation
+                of an object. Servers should convert recognized schemas to the latest
+                internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources"
+              type: string
+            kind:
+              description:
+                "Kind is a string value representing the REST resource this
+                object represents. Servers may infer this from the endpoint the client
+                submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds"
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: HelmReleaseSpec defines the desired state of a Helm release.
+              properties:
+                chart:
+                  description:
+                    Chart defines the template of the v1beta1.HelmChart that
+                    should be created for this HelmRelease.
+                  properties:
+                    spec:
+                      description:
+                        Spec holds the template for the v1beta1.HelmChartSpec
+                        for this HelmRelease.
+                      properties:
+                        chart:
+                          description:
+                            The name or path the Helm chart is available
+                            at in the SourceRef.
+                          type: string
+                        interval:
+                          description:
+                            Interval at which to check the v1beta1.Source
+                            for updates. Defaults to 'HelmReleaseSpec.Interval'.
+                          type: string
+                        sourceRef:
+                          description:
+                            The name and namespace of the v1beta1.Source
+                            the chart is available at.
+                          properties:
+                            apiVersion:
+                              description: APIVersion of the referent.
+                              type: string
+                            kind:
+                              description: Kind of the referent.
+                              enum:
+                                - HelmRepository
+                                - GitRepository
+                                - Bucket
+                              type: string
+                            name:
+                              description: Name of the referent.
+                              maxLength: 253
+                              minLength: 1
+                              type: string
+                            namespace:
+                              description: Namespace of the referent.
+                              maxLength: 63
+                              minLength: 1
+                              type: string
+                          required:
+                            - name
+                          type: object
+                        valuesFile:
+                          description:
+                            Alternative values file to use as the default
+                            chart values, expected to be a relative path in the SourceRef.
+                            Ignored when omitted.
+                          type: string
+                        version:
+                          default: "*"
+                          description:
+                            Version semver expression, ignored for charts
+                            from v1beta1.GitRepository and v1beta1.Bucket sources. Defaults
+                            to latest when omitted.
+                          type: string
+                      required:
+                        - chart
+                        - sourceRef
+                      type: object
+                  required:
+                    - spec
+                  type: object
+                dependsOn:
+                  description:
+                    DependsOn may contain a dependency.CrossNamespaceDependencyReference
+                    slice with references to HelmRelease resources that must be ready
+                    before this HelmRelease can be reconciled.
+                  items:
+                    description:
+                      CrossNamespaceDependencyReference holds the reference
+                      to a dependency.
+                    properties:
+                      name:
+                        description: Name holds the name reference of a dependency.
+                        type: string
+                      namespace:
+                        description: Namespace holds the namespace reference of a dependency.
+                        type: string
+                    required:
+                      - name
+                    type: object
+                  type: array
+                install:
+                  description:
+                    Install holds the configuration for Helm install actions
+                    for this HelmRelease.
+                  properties:
+                    createNamespace:
+                      description:
+                        CreateNamespace tells the Helm install action to
+                        create the HelmReleaseSpec.TargetNamespace if it does not exist
+                        yet. On uninstall, the namespace will not be garbage collected.
+                      type: boolean
+                    disableHooks:
+                      description:
+                        DisableHooks prevents hooks from running during the
+                        Helm install action.
+                      type: boolean
+                    disableOpenAPIValidation:
+                      description:
+                        DisableOpenAPIValidation prevents the Helm install
+                        action from validating rendered templates against the Kubernetes
+                        OpenAPI Schema.
+                      type: boolean
+                    disableWait:
+                      description:
+                        DisableWait disables the waiting for resources to
+                        be ready after a Helm install has been performed.
+                      type: boolean
+                    remediation:
+                      description:
+                        Remediation holds the remediation configuration for
+                        when the Helm install action for the HelmRelease fails. The
+                        default is to not perform any action.
+                      properties:
+                        ignoreTestFailures:
+                          description:
+                            IgnoreTestFailures tells the controller to skip
+                            remediation when the Helm tests are run after an install
+                            action but fail. Defaults to 'Test.IgnoreFailures'.
+                          type: boolean
+                        remediateLastFailure:
+                          description:
+                            RemediateLastFailure tells the controller to
+                            remediate the last failure, when no retries remain. Defaults
+                            to 'false'.
+                          type: boolean
+                        retries:
+                          description:
+                            Retries is the number of retries that should
+                            be attempted on failures before bailing. Remediation, using
+                            an uninstall, is performed between each attempt. Defaults
+                            to '0', a negative integer equals to unlimited retries.
+                          type: integer
+                      type: object
+                    replace:
+                      description:
+                        Replace tells the Helm install action to re-use the
+                        'ReleaseName', but only if that name is a deleted release which
+                        remains in the history.
+                      type: boolean
+                    skipCRDs:
+                      description:
+                        SkipCRDs tells the Helm install action to not install
+                        any CRDs. By default, CRDs are installed if not already present.
+                      type: boolean
+                    timeout:
+                      description:
+                        Timeout is the time to wait for any individual Kubernetes
+                        operation (like Jobs for hooks) during the performance of a
+                        Helm install action. Defaults to 'HelmReleaseSpec.Timeout'.
+                      type: string
+                  type: object
+                interval:
+                  description: Interval at which to reconcile the Helm release.
+                  type: string
+                kubeConfig:
+                  description:
+                    KubeConfig for reconciling the HelmRelease on a remote
+                    cluster. When specified, KubeConfig takes precedence over ServiceAccountName.
+                  properties:
+                    secretRef:
+                      description:
+                        SecretRef holds the name to a secret that contains
+                        a 'value' key with the kubeconfig file as the value. It must
+                        be in the same namespace as the HelmRelease. It is recommended
+                        that the kubeconfig is self-contained, and the secret is regularly
+                        updated if credentials such as a cloud-access-token expire.
+                        Cloud specific `cmd-path` auth helpers will not function without
+                        adding binaries and credentials to the Pod that is responsible
+                        for reconciling the HelmRelease.
+                      properties:
+                        name:
+                          description:
+                            "Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                            TODO: Add other useful fields. apiVersion, kind, uid?"
+                          type: string
+                      type: object
+                  type: object
+                maxHistory:
+                  description:
+                    MaxHistory is the number of revisions saved by Helm for
+                    this HelmRelease. Use '0' for an unlimited number of revisions;
+                    defaults to '10'.
+                  type: integer
+                releaseName:
+                  description:
+                    ReleaseName used for the Helm release. Defaults to a
+                    composition of '[TargetNamespace-]Name'.
+                  maxLength: 53
+                  minLength: 1
+                  type: string
+                rollback:
+                  description:
+                    Rollback holds the configuration for Helm rollback actions
+                    for this HelmRelease.
+                  properties:
+                    cleanupOnFail:
+                      description:
+                        CleanupOnFail allows deletion of new resources created
+                        during the Helm rollback action when it fails.
+                      type: boolean
+                    disableHooks:
+                      description:
+                        DisableHooks prevents hooks from running during the
+                        Helm rollback action.
+                      type: boolean
+                    disableWait:
+                      description:
+                        DisableWait disables the waiting for resources to
+                        be ready after a Helm rollback has been performed.
+                      type: boolean
+                    force:
+                      description:
+                        Force forces resource updates through a replacement
+                        strategy.
+                      type: boolean
+                    recreate:
+                      description:
+                        Recreate performs pod restarts for the resource if
+                        applicable.
+                      type: boolean
+                    timeout:
+                      description:
+                        Timeout is the time to wait for any individual Kubernetes
+                        operation (like Jobs for hooks) during the performance of a
+                        Helm rollback action. Defaults to 'HelmReleaseSpec.Timeout'.
+                      type: string
+                  type: object
+                serviceAccountName:
+                  description:
+                    The name of the Kubernetes service account to impersonate
+                    when reconciling this HelmRelease.
+                  type: string
+                suspend:
+                  description:
+                    Suspend tells the controller to suspend reconciliation
+                    for this HelmRelease, it does not apply to already started reconciliations.
+                    Defaults to false.
+                  type: boolean
+                targetNamespace:
+                  description:
+                    TargetNamespace to target when performing operations
+                    for the HelmRelease. Defaults to the namespace of the HelmRelease.
+                  maxLength: 63
+                  minLength: 1
+                  type: string
+                test:
+                  description:
+                    Test holds the configuration for Helm test actions for
+                    this HelmRelease.
+                  properties:
+                    enable:
+                      description:
+                        Enable enables Helm test actions for this HelmRelease
+                        after an Helm install or upgrade action has been performed.
+                      type: boolean
+                    ignoreFailures:
+                      description:
+                        IgnoreFailures tells the controller to skip remediation
+                        when the Helm tests are run but fail. Can be overwritten for
+                        tests run after install or upgrade actions in 'Install.IgnoreTestFailures'
+                        and 'Upgrade.IgnoreTestFailures'.
+                      type: boolean
+                    timeout:
+                      description:
+                        Timeout is the time to wait for any individual Kubernetes
+                        operation during the performance of a Helm test action. Defaults
+                        to 'HelmReleaseSpec.Timeout'.
+                      type: string
+                  type: object
+                timeout:
+                  description:
+                    Timeout is the time to wait for any individual Kubernetes
+                    operation (like Jobs for hooks) during the performance of a Helm
+                    action. Defaults to '5m0s'.
+                  type: string
+                uninstall:
+                  description:
+                    Uninstall holds the configuration for Helm uninstall
+                    actions for this HelmRelease.
+                  properties:
+                    disableHooks:
+                      description:
+                        DisableHooks prevents hooks from running during the
+                        Helm rollback action.
+                      type: boolean
+                    keepHistory:
+                      description:
+                        KeepHistory tells Helm to remove all associated resources
+                        and mark the release as deleted, but retain the release history.
+                      type: boolean
+                    timeout:
+                      description:
+                        Timeout is the time to wait for any individual Kubernetes
+                        operation (like Jobs for hooks) during the performance of a
+                        Helm uninstall action. Defaults to 'HelmReleaseSpec.Timeout'.
+                      type: string
+                  type: object
+                upgrade:
+                  description:
+                    Upgrade holds the configuration for Helm upgrade actions
+                    for this HelmRelease.
+                  properties:
+                    cleanupOnFail:
+                      description:
+                        CleanupOnFail allows deletion of new resources created
+                        during the Helm upgrade action when it fails.
+                      type: boolean
+                    disableHooks:
+                      description:
+                        DisableHooks prevents hooks from running during the
+                        Helm upgrade action.
+                      type: boolean
+                    disableOpenAPIValidation:
+                      description:
+                        DisableOpenAPIValidation prevents the Helm upgrade
+                        action from validating rendered templates against the Kubernetes
+                        OpenAPI Schema.
+                      type: boolean
+                    disableWait:
+                      description:
+                        DisableWait disables the waiting for resources to
+                        be ready after a Helm upgrade has been performed.
+                      type: boolean
+                    force:
+                      description:
+                        Force forces resource updates through a replacement
+                        strategy.
+                      type: boolean
+                    preserveValues:
+                      description:
+                        PreserveValues will make Helm reuse the last release's
+                        values and merge in overrides from 'Values'. Setting this flag
+                        makes the HelmRelease non-declarative.
+                      type: boolean
+                    remediation:
+                      description:
+                        Remediation holds the remediation configuration for
+                        when the Helm upgrade action for the HelmRelease fails. The
+                        default is to not perform any action.
+                      properties:
+                        ignoreTestFailures:
+                          description:
+                            IgnoreTestFailures tells the controller to skip
+                            remediation when the Helm tests are run after an upgrade
+                            action but fail. Defaults to 'Test.IgnoreFailures'.
+                          type: boolean
+                        remediateLastFailure:
+                          description:
+                            RemediateLastFailure tells the controller to
+                            remediate the last failure, when no retries remain. Defaults
+                            to 'false' unless 'Retries' is greater than 0.
+                          type: boolean
+                        retries:
+                          description:
+                            Retries is the number of retries that should
+                            be attempted on failures before bailing. Remediation, using
+                            'Strategy', is performed between each attempt. Defaults
+                            to '0', a negative integer equals to unlimited retries.
+                          type: integer
+                        strategy:
+                          description:
+                            Strategy to use for failure remediation. Defaults
+                            to 'rollback'.
+                          enum:
+                            - rollback
+                            - uninstall
+                          type: string
+                      type: object
+                    timeout:
+                      description:
+                        Timeout is the time to wait for any individual Kubernetes
+                        operation (like Jobs for hooks) during the performance of a
+                        Helm upgrade action. Defaults to 'HelmReleaseSpec.Timeout'.
+                      type: string
+                  type: object
+                values:
+                  description: Values holds the values for this Helm release.
+                  x-kubernetes-preserve-unknown-fields: true
+                valuesFrom:
+                  description:
+                    ValuesFrom holds references to resources containing Helm
+                    values for this HelmRelease, and information about how they should
+                    be merged.
+                  items:
+                    description:
+                      ValuesReference contains a reference to a resource
+                      containing Helm values, and optionally the key they can be found
+                      at.
+                    properties:
+                      kind:
+                        description:
+                          Kind of the values referent, valid values are ('Secret',
+                          'ConfigMap').
+                        enum:
+                          - Secret
+                          - ConfigMap
+                        type: string
+                      name:
+                        description:
+                          Name of the values referent. Should reside in the
+                          same namespace as the referring resource.
+                        maxLength: 253
+                        minLength: 1
+                        type: string
+                      optional:
+                        description:
+                          Optional marks this ValuesReference as optional.
+                          When set, a not found error for the values reference is ignored,
+                          but any ValuesKey, TargetPath or transient error will still
+                          result in a reconciliation failure.
+                        type: boolean
+                      targetPath:
+                        description:
+                          TargetPath is the YAML dot notation path the value
+                          should be merged at. When set, the ValuesKey is expected to
+                          be a single flat value. Defaults to 'None', which results
+                          in the values getting merged at the root.
+                        type: string
+                      valuesKey:
+                        description:
+                          ValuesKey is the data key where the values.yaml
+                          or a specific value can be found at. Defaults to 'values.yaml'.
+                        type: string
+                    required:
+                      - kind
+                      - name
+                    type: object
+                  type: array
+              required:
+                - chart
+                - interval
+              type: object
+            status:
+              description: HelmReleaseStatus defines the observed state of a HelmRelease.
+              properties:
+                conditions:
+                  description: Conditions holds the conditions for the HelmRelease.
+                  items:
+                    description:
+                      "Condition contains details for one aspect of the current
+                      state of this API Resource. --- This struct is intended for direct
+                      use as an array at the field path .status.conditions.  For example,
+                      type FooStatus struct{     // Represents the observations of a
+                      foo's current state.     // Known .status.conditions.type are:
+                      \"Available\", \"Progressing\", and \"Degraded\"     // +patchMergeKey=type
+                      \    // +patchStrategy=merge     // +listType=map     // +listMapKey=type
+                      \    Conditions []metav1.Condition `json:\"conditions,omitempty\"
+                      patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`
+                      \n     // other fields }"
+                    properties:
+                      lastTransitionTime:
+                        description:
+                          lastTransitionTime is the last time the condition
+                          transitioned from one status to another. This should be when
+                          the underlying condition changed.  If that is not known, then
+                          using the time when the API field changed is acceptable.
+                        format: date-time
+                        type: string
+                      message:
+                        description:
+                          message is a human readable message indicating
+                          details about the transition. This may be an empty string.
+                        maxLength: 32768
+                        type: string
+                      observedGeneration:
+                        description:
+                          observedGeneration represents the .metadata.generation
+                          that the condition was set based upon. For instance, if .metadata.generation
+                          is currently 12, but the .status.conditions[x].observedGeneration
+                          is 9, the condition is out of date with respect to the current
+                          state of the instance.
+                        format: int64
+                        minimum: 0
+                        type: integer
+                      reason:
+                        description:
+                          reason contains a programmatic identifier indicating
+                          the reason for the condition's last transition. Producers
+                          of specific condition types may define expected values and
+                          meanings for this field, and whether the values are considered
+                          a guaranteed API. The value should be a CamelCase string.
+                          This field may not be empty.
+                        maxLength: 1024
+                        minLength: 1
+                        pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                        type: string
+                      status:
+                        description: status of the condition, one of True, False, Unknown.
+                        enum:
+                          - "True"
+                          - "False"
+                          - Unknown
+                        type: string
+                      type:
+                        description:
+                          type of condition in CamelCase or in foo.example.com/CamelCase.
+                          --- Many .condition.type values are consistent across resources
+                          like Available, but because arbitrary conditions can be useful
+                          (see .node.status.conditions), the ability to deconflict is
+                          important. The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+                        maxLength: 316
+                        pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                        type: string
+                    required:
+                      - lastTransitionTime
+                      - message
+                      - reason
+                      - status
+                      - type
+                    type: object
+                  type: array
+                failures:
+                  description:
+                    Failures is the reconciliation failure count against
+                    the latest desired state. It is reset after a successful reconciliation.
+                  format: int64
+                  type: integer
+                helmChart:
+                  description:
+                    HelmChart is the namespaced name of the HelmChart resource
+                    created by the controller for the HelmRelease.
+                  type: string
+                installFailures:
+                  description:
+                    InstallFailures is the install failure count against
+                    the latest desired state. It is reset after a successful reconciliation.
+                  format: int64
+                  type: integer
+                lastAppliedRevision:
+                  description:
+                    LastAppliedRevision is the revision of the last successfully
+                    applied source.
+                  type: string
+                lastAttemptedRevision:
+                  description:
+                    LastAttemptedRevision is the revision of the last reconciliation
+                    attempt.
+                  type: string
+                lastAttemptedValuesChecksum:
+                  description:
+                    LastAttemptedValuesChecksum is the SHA1 checksum of the
+                    values of the last reconciliation attempt.
+                  type: string
+                lastHandledReconcileAt:
+                  description:
+                    LastHandledReconcileAt holds the value of the most recent
+                    reconcile request value, so a change can be detected.
+                  type: string
+                lastReleaseRevision:
+                  description:
+                    LastReleaseRevision is the revision of the last successful
+                    Helm release.
+                  type: integer
+                observedGeneration:
+                  description: ObservedGeneration is the last observed generation.
+                  format: int64
+                  type: integer
+                upgradeFailures:
+                  description:
+                    UpgradeFailures is the upgrade failure count against
+                    the latest desired state. It is reset after a successful reconciliation.
+                  format: int64
+                  type: integer
+              type: object
+          type: object
       served: true
       storage: true
+      subresources:
+        status: {}
 status:
   acceptedNames:
     kind: ""

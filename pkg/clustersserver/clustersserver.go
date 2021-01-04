@@ -199,10 +199,7 @@ func (s *Server) ListHelmReleases(ctx context.Context, msg *pb.ListHelmReleasesR
 		return nil, fmt.Errorf("could not list helm releases: %w", err)
 	}
 
-	fmt.Println(list.Items)
-
 	for _, r := range list.Items {
-		fmt.Println(r.Name)
 		res.HelmReleases = append(res.HelmReleases, &pb.HelmRelease{Name: r.Name})
 	}
 
