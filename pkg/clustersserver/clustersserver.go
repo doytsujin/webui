@@ -191,7 +191,7 @@ func (s *Server) ListHelmReleases(ctx context.Context, msg *pb.ListHelmReleasesR
 
 	list := helmv2.HelmReleaseList{}
 
-	if err := c.List(ctx, &list, &client.ListOptions{Namespace: "default"}); err != nil {
+	if err := c.List(ctx, &list, &client.ListOptions{Namespace: msg.Namespace}); err != nil {
 		if apierrors.IsNotFound(err) {
 			return res, nil
 		}
