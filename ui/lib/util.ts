@@ -14,9 +14,17 @@ export const wrappedFetch = (url, opts: RequestInit = {}) => {
 export const normalizePath = (pathname) => {
   return _.tail(pathname.split("/"));
 };
-export const prefixRoute = (route: string, idParam?: string) =>
-  `/:context/${route}${idParam ? "/:" + idParam : ""}`;
 
-export enum PageRoutes {
-  HelmReleases = "helm_releases",
+export const prefixRoute = (route: string, ...idParams: string[]) =>
+  `/:context/${route}${
+    idParams ? _.map(idParams, (p) => "/:" + p).join("") : ""
+  }`;
+
+export const toRoute = (route: PageRoute, params: string[]) =>
+  `/${route}${params ? `/${_.map(params, (p) => `${p}/`).join("")}` : ""}`;
+
+export enum PageRoute {
+  Sources = "sources",
+  Kustomizations = "kustomizations",
+  HelmReleases = "helmreleases",
 }

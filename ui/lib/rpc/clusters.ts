@@ -286,11 +286,13 @@ const JSONToHelmRelease = (m: HelmRelease | HelmReleaseJSON): HelmRelease => {
 
 export interface ListHelmReleasesReq {
     contextname: string;
+    namespace: string;
     
 }
 
 interface ListHelmReleasesReqJSON {
     contextName: string;
+    namespace: string;
     
 }
 
@@ -298,6 +300,7 @@ interface ListHelmReleasesReqJSON {
 const ListHelmReleasesReqToJSON = (m: ListHelmReleasesReq): ListHelmReleasesReqJSON => {
     return {
         contextName: m.contextname,
+        namespace: m.namespace,
         
     };
 };

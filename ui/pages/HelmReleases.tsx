@@ -3,6 +3,7 @@ import _ from "lodash";
 import styled from "styled-components";
 import { useHelmReleases } from "../lib/hooks";
 import Link from "../components/Link";
+import { PageRoute } from "../lib/util";
 
 type Props = {
   className?: string;
@@ -18,7 +19,9 @@ function HelmRelease({ className }: Props) {
       <ul>
         {_.map(helmReleases, (hr) => (
           <li key={hr.name}>
-            <Link to={`/helmreleases/${hr.name}`}>{hr.name}</Link>
+            <Link route={PageRoute.HelmReleases} params={[hr.name]}>
+              {hr.name}
+            </Link>
           </li>
         ))}
       </ul>

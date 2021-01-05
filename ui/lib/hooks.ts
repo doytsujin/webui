@@ -117,6 +117,7 @@ export function useHelmReleases(): HelmRelease[] {
     clusters
       .listHelmReleases({
         contextname: currentContext,
+        namespace: "default",
       })
       .then((res) => {
         setHelmReleases(res.helmReleases);
