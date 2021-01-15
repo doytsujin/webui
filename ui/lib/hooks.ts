@@ -70,14 +70,17 @@ type KustomizationList = { [name: string]: Kustomization };
 export function useKustomizations(): KustomizationList {
   const [kustomizations, setKustomizations] = useState({} as KustomizationList);
 
-  const { currentContext } = useKubernetesContexts();
+  const { currentContext, currentNamespace } = useKubernetesContexts();
 
   useEffect(() => {
     if (!currentContext) {
       return;
     }
     clusters
-      .listKustomizations({ contextname: currentContext })
+      .listKustomizations({
+        contextname: currentContext,
+        namespace: currentNamespace,
+      })
       .then((res) => {
         const r = _.keyBy(res.kustomizations, "name");
         setKustomizations(r);
@@ -100,7 +103,7 @@ export function useSources(sourceType: SourceType): Source[] {
     [SourceType.Bucket]: [],
     [SourceType.Helm]: [],
   });
-  const { currentContext } = useKubernetesContexts();
+  const { currentContext, currentNamespace } = useKubernetesContexts();
 
   useEffect(() => {
     if (!currentContext) {
@@ -110,6 +113,7 @@ export function useSources(sourceType: SourceType): Source[] {
     clusters
       .listSources({
         contextname: currentContext,
+        namespace: currentNamespace,
         sourcetype: sourceType,
       })
       .then((res) => {

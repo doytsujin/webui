@@ -159,11 +159,13 @@ const JSONToKustomization = (m: Kustomization | KustomizationJSON): Kustomizatio
 
 export interface ListKustomizationsReq {
     contextname: string;
+    namespace: string;
     
 }
 
 interface ListKustomizationsReqJSON {
     contextName: string;
+    namespace: string;
     
 }
 
@@ -171,6 +173,7 @@ interface ListKustomizationsReqJSON {
 const ListKustomizationsReqToJSON = (m: ListKustomizationsReq): ListKustomizationsReqJSON => {
     return {
         contextName: m.contextname,
+        namespace: m.namespace,
         
     };
 };
@@ -261,12 +264,14 @@ const JSONToSource = (m: Source | SourceJSON): Source => {
 
 export interface ListSourcesReq {
     contextname: string;
+    namespace: string;
     sourcetype: string;
     
 }
 
 interface ListSourcesReqJSON {
     contextName: string;
+    namespace: string;
     sourceType: string;
     
 }
@@ -275,6 +280,7 @@ interface ListSourcesReqJSON {
 const ListSourcesReqToJSON = (m: ListSourcesReq): ListSourcesReqJSON => {
     return {
         contextName: m.contextname,
+        namespace: m.namespace,
         sourceType: m.sourcetype,
         
     };
@@ -301,16 +307,16 @@ const JSONToListSourcesRes = (m: ListSourcesRes | ListSourcesResJSON): ListSourc
 
 export interface SyncKustomizationReq {
     contextname: string;
+    namespace: string;
     kustomizationname: string;
-    kustomizationnamespace: string;
     withsource: boolean;
     
 }
 
 interface SyncKustomizationReqJSON {
     contextName: string;
+    namespace: string;
     kustomizationName: string;
-    kustomizationNamespace: string;
     withSource: boolean;
     
 }
@@ -319,8 +325,8 @@ interface SyncKustomizationReqJSON {
 const SyncKustomizationReqToJSON = (m: SyncKustomizationReq): SyncKustomizationReqJSON => {
     return {
         contextName: m.contextname,
+        namespace: m.namespace,
         kustomizationName: m.kustomizationname,
-        kustomizationNamespace: m.kustomizationnamespace,
         withSource: m.withsource,
         
     };
