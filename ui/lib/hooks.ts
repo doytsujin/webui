@@ -1,8 +1,6 @@
 import _ from "lodash";
 import { useContext, useEffect, useState } from "react";
-import { useHistory, useLocation, useParams } from "react-router-dom";
-import queryString from "query-string";
-
+import { useLocation } from "react-router-dom";
 import { AppContext } from "../components/AppStateProvider";
 import {
   Context,
@@ -14,36 +12,56 @@ import { normalizePath, wrappedFetch } from "./util";
 
 const clusters = new DefaultClusters("/api/clusters", wrappedFetch);
 
+export const getNamespaces = async (contextname: string) =>
+  clusters.listNamespacesForContext({ contextname });
+
 export function useKubernetesContexts(): {
   contexts: Context[];
+  namespaces: string[];
   currentContext: string;
+  currentNamespace: string;
   setCurrentContext: (context: string) => void;
+  setCurrentNamespace: (namespace: string) => void;
 } {
   const location = useLocation();
   const {
     contexts,
+    namespaces,
     currentContext,
+    currentNamespace,
     setContexts,
     setCurrentContext,
+    setNamespaces,
+    setCurrentNamespace,
   } = useContext(AppContext);
 
   useEffect(() => {
-    clusters
-      .listContexts({})
-      .then((res) => {
-        const [pathContext] = normalizePath(location.pathname);
-        setContexts(res.contexts);
-        // If there is a context in the path, use that, else use the one set
-        // in the .kubeconfig file returned by the backend.
-        setCurrentContext(pathContext || res.currentcontext);
-      })
-      .catch((e) => console.error(e));
+    (async () => {
+      const res = await clusters.listContexts({});
+      const [pathContext] = normalizePath(location.pathname);
+      setContexts(res.contexts);
+      // If there is a context in the path, use that, else use the one set
+      // in the .kubeconfig file returned by the backend.
+      const nextCtx = (pathContext as string) || (res.currentcontext as string);
+      setCurrentContext(nextCtx);
+
+      const nsRes = await getNamespaces(nextCtx);
+
+      setNamespaces({
+        ...namespaces,
+        ...{ [nextCtx]: nsRes.namespaces },
+      });
+      setCurrentNamespace(nsRes.namespaces[0]);
+    })();
   }, []);
 
   return {
     contexts,
+    namespaces: namespaces[currentContext] || [],
     currentContext,
+    currentNamespace,
     setCurrentContext,
+    setCurrentNamespace,
   };
 }
 

@@ -58,6 +58,43 @@ const JSONToListContextsRes = (m: ListContextsRes | ListContextsResJSON): ListCo
     };
 };
 
+export interface ListNamespacesForContextReq {
+    contextname: string;
+    
+}
+
+interface ListNamespacesForContextReqJSON {
+    contextName: string;
+    
+}
+
+
+const ListNamespacesForContextReqToJSON = (m: ListNamespacesForContextReq): ListNamespacesForContextReqJSON => {
+    return {
+        contextName: m.contextname,
+        
+    };
+};
+
+export interface ListNamespacesForContextRes {
+    namespaces: string[];
+    
+}
+
+interface ListNamespacesForContextResJSON {
+    namespaces: string[];
+    
+}
+
+
+const JSONToListNamespacesForContextRes = (m: ListNamespacesForContextRes | ListNamespacesForContextResJSON): ListNamespacesForContextRes => {
+    
+    return {
+        namespaces: m.namespaces,
+        
+    };
+};
+
 export interface Condition {
     type: string;
     status: string;
@@ -311,6 +348,8 @@ const JSONToSyncKustomizationRes = (m: SyncKustomizationRes | SyncKustomizationR
 export interface Clusters {
     listContexts: (listContextsReq: ListContextsReq) => Promise<ListContextsRes>;
     
+    listNamespacesForContext: (listNamespacesForContextReq: ListNamespacesForContextReq) => Promise<ListNamespacesForContextRes>;
+    
     listKustomizations: (listKustomizationsReq: ListKustomizationsReq) => Promise<ListKustomizationsRes>;
     
     listSources: (listSourcesReq: ListSourcesReq) => Promise<ListSourcesRes>;
@@ -342,6 +381,21 @@ export class DefaultClusters implements Clusters {
             }
 
             return resp.json().then(JSONToListContextsRes);
+        });
+    }
+    
+    listNamespacesForContext(listNamespacesForContextReq: ListNamespacesForContextReq): Promise<ListNamespacesForContextRes> {
+        const url = this.hostname + this.pathPrefix + "ListNamespacesForContext";
+        let body: ListNamespacesForContextReq | ListNamespacesForContextReqJSON = listNamespacesForContextReq;
+        if (!this.writeCamelCase) {
+            body = ListNamespacesForContextReqToJSON(listNamespacesForContextReq);
+        }
+        return this.fetch(createTwirpRequest(url, body)).then((resp) => {
+            if (!resp.ok) {
+                return throwTwirpError(resp);
+            }
+
+            return resp.json().then(JSONToListNamespacesForContextRes);
         });
     }
     

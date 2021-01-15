@@ -48,8 +48,11 @@ const Styled = (cmp) => styled(cmp)`
 function LeftNav({ className }: Props) {
   const {
     contexts,
+    namespaces,
     currentContext,
+    currentNamespace,
     setCurrentContext,
+    setCurrentNamespace,
   } = useKubernetesContexts();
 
   const location = useLocation();
@@ -80,6 +83,23 @@ function LeftNav({ className }: Props) {
             {_.map(contexts, (c) => (
               <MenuItem value={c.name} key={c.name}>
                 {c.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="namespaces-selector">Namespace</InputLabel>
+          <Select
+            onChange={(ev) => {
+              setCurrentNamespace(ev.target.value as string);
+            }}
+            value={currentNamespace}
+            id="namespaces-selector"
+            label="Namespace"
+          >
+            {_.map(namespaces, (ns) => (
+              <MenuItem value={ns} key={ns}>
+                {ns}
               </MenuItem>
             ))}
           </Select>
