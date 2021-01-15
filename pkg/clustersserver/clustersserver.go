@@ -17,6 +17,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 )
 
@@ -72,6 +73,29 @@ func (s *Server) ListContexts(ctx context.Context, msg *pb.ListContextsReq) (*pb
 	}
 
 	return &pb.ListContextsRes{Contexts: ctxs, CurrentContext: s.InitialContext}, nil
+}
+
+func (s *Server) ListNamespacesForContext(ctx context.Context, msg *pb.ListNamespacesForContextReq) (*pb.ListNamespacesForContextRes, error) {
+	client, err := s.getClient(msg.ContextName)
+
+	if err != nil {
+		return nil, fmt.Errorf("could not create client: %w", err)
+	}
+
+	result := corev1.NamespaceList{}
+	if err := client.List(ctx, &result); err != nil {
+		return nil, fmt.Errorf("could not list namespaces: %w", err)
+	}
+
+	res := pb.ListNamespacesForContextRes{
+		Namespaces: []string{},
+	}
+
+	for _, ns := range result.Items {
+		res.Namespaces = append(res.Namespaces, ns.Name)
+	}
+
+	return &res, nil
 }
 
 func (s *Server) ListKustomizations(ctx context.Context, msg *pb.ListKustomizationsReq) (*pb.ListKustomizationsRes, error) {
