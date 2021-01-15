@@ -81,7 +81,7 @@ function LeftNav({ className }: Props) {
             label="Contexts"
           >
             {_.map(contexts, (c) => (
-              <MenuItem value={c.name} key={c.name}>
+              <MenuItem value={c.name || ""} key={c.name}>
                 {c.name}
               </MenuItem>
             ))}
@@ -93,7 +93,8 @@ function LeftNav({ className }: Props) {
             onChange={(ev) => {
               setCurrentNamespace(ev.target.value as string);
             }}
-            value={currentNamespace}
+            // Avoid a material-ui warning
+            value={namespaces.length === 0 ? "" : currentNamespace}
             id="namespaces-selector"
             label="Namespace"
           >

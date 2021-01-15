@@ -53,7 +53,7 @@ export function useKubernetesContexts(): {
       });
       setCurrentNamespace(nsRes.namespaces[0]);
     })();
-  }, []);
+  }, [currentContext]);
 
   return {
     contexts,
