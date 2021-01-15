@@ -50,6 +50,7 @@ message Kustomization {
 
 message ListKustomizationsReq {
     string contextName = 1;
+    string namespace = 2;
 }
 
 message ListKustomizationsRes {
@@ -81,7 +82,8 @@ message Source {
 
 message ListSourcesReq {
     string contextName = 1;
-    string sourceType = 2;
+    string namespace = 2;
+    string sourceType = 3;
 }
 
 message ListSourcesRes {
@@ -90,8 +92,8 @@ message ListSourcesRes {
 
 message SyncKustomizationReq {
     string contextName = 1;
-    string kustomizationName = 2;
-    string kustomizationNamespace = 3;
+    string namespace = 2;
+    string kustomizationName = 3;
     bool withSource = 4;
 }
 
