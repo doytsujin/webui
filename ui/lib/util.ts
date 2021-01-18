@@ -16,7 +16,7 @@ export const normalizePath = (pathname) => {
 };
 
 export const prefixRoute = (route: string, ...idParams: string[]) =>
-  `/:context/${route}${
+  `/:context/:namespace/${route}${
     idParams ? _.map(idParams, (p) => "/:" + p).join("") : ""
   }`;
 

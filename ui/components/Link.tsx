@@ -16,10 +16,13 @@ const Styled = (c) => styled(c)``;
 
 function Link({ className, route, children, params }: Props) {
   const location = useLocation();
-  const [context] = normalizePath(location.pathname);
+  const [context, namespace] = normalizePath(location.pathname);
 
   return (
-    <a href={`/${context}${toRoute(route, params)}`} className={className}>
+    <a
+      href={`/${context}/${namespace}${toRoute(route, params)}`}
+      className={className}
+    >
       {children}
     </a>
   );

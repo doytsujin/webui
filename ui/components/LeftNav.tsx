@@ -60,7 +60,7 @@ function LeftNav({ className }: Props) {
 
   const location = useLocation();
   const history = useHistory();
-  const [, pageName] = normalizePath(location.pathname);
+  const [, , pageName] = normalizePath(location.pathname);
 
   return (
     <div className={className}>
@@ -77,7 +77,9 @@ function LeftNav({ className }: Props) {
             onChange={(ev) => {
               const nextCtx = ev.target.value;
               setCurrentContext(nextCtx as string);
-              history.replace(`/${nextCtx}/${pageName}`);
+              history.replace(
+                `/${nextCtx}/${currentNamespace || "all"}/${pageName}`
+              );
             }}
             value={currentContext}
             id="context-selector"
@@ -98,6 +100,9 @@ function LeftNav({ className }: Props) {
                 const nextNs =
                   ev.target.value === allNamespaces ? "" : ev.target.value;
                 setCurrentNamespace(nextNs as string);
+                history.replace(
+                  `/${currentContext}/${nextNs || "all"}/${pageName}`
+                );
               }}
               // Avoid a material-ui warning
               value={currentNamespace || allNamespaces}

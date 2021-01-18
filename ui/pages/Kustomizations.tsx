@@ -16,6 +16,7 @@ function Kustomizations({ className }: Props) {
 
   return (
     <div className={className}>
+      <h2>Kustomizations</h2>
       <ul>
         {_.map(kustomizations, (v, k) => (
           <li key={v.name}>
