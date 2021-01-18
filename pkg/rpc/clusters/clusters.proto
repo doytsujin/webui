@@ -5,6 +5,7 @@ option go_package = "pkg/rpc/clusters";
 
 service Clusters {
     rpc ListContexts (ListContextsReq) returns (ListContextsRes);
+    rpc ListNamespacesForContext (ListNamespacesForContextReq) returns (ListNamespacesForContextRes);
     rpc ListKustomizations (ListKustomizationsReq) returns (ListKustomizationsRes);
     rpc ListSources (ListSourcesReq) returns (ListSourcesRes);
     rpc SyncKustomization (SyncKustomizationReq) returns (SyncKustomizationRes);
@@ -22,6 +23,14 @@ message ListContextsReq {
 message ListContextsRes {
     string currentContext = 1;
     repeated Context contexts = 2;
+}
+
+message ListNamespacesForContextReq {
+    string contextName = 1;
+}
+
+message ListNamespacesForContextRes {
+    repeated string namespaces = 1;
 }
 
 message Condition {
@@ -42,6 +51,7 @@ message Kustomization {
 
 message ListKustomizationsReq {
     string contextName = 1;
+    string namespace = 2;
 }
 
 message ListKustomizationsRes {
@@ -73,7 +83,8 @@ message Source {
 
 message ListSourcesReq {
     string contextName = 1;
-    string sourceType = 2;
+    string namespace = 2;
+    string sourceType = 3;
 }
 
 message ListSourcesRes {
@@ -83,8 +94,8 @@ message ListSourcesRes {
 
 message SyncKustomizationReq {
     string contextName = 1;
-    string kustomizationName = 2;
-    string kustomizationNamespace = 3;
+    string namespace = 2;
+    string kustomizationName = 3;
     bool withSource = 4;
 }
 

@@ -18,6 +18,7 @@ import (
 	"k8s.io/apimachinery/pkg/util/wait"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 )
 
@@ -75,15 +76,48 @@ func (s *Server) ListContexts(ctx context.Context, msg *pb.ListContextsReq) (*pb
 	return &pb.ListContextsRes{Contexts: ctxs, CurrentContext: s.InitialContext}, nil
 }
 
+func (s *Server) ListNamespacesForContext(ctx context.Context, msg *pb.ListNamespacesForContextReq) (*pb.ListNamespacesForContextRes, error) {
+	c, err := s.getClient(msg.ContextName)
+
+	if err != nil {
+		return nil, fmt.Errorf("could not create client: %w", err)
+	}
+
+	result := corev1.NamespaceList{}
+	if err := c.List(ctx, &result); err != nil {
+		return nil, fmt.Errorf("could not list namespaces: %w", err)
+	}
+
+	res := pb.ListNamespacesForContextRes{
+		Namespaces: []string{},
+	}
+
+	for _, ns := range result.Items {
+		res.Namespaces = append(res.Namespaces, ns.Name)
+	}
+
+	return &res, nil
+}
+
+func namespaceOpts(ns string) *client.ListOptions {
+	opts := client.ListOptions{}
+	if ns != "" {
+		opts.Namespace = ns
+	}
+
+	return &opts
+}
+
 func (s *Server) ListKustomizations(ctx context.Context, msg *pb.ListKustomizationsReq) (*pb.ListKustomizationsRes, error) {
-	client, err := s.getClient(msg.ContextName)
+	c, err := s.getClient(msg.ContextName)
 
 	if err != nil {
 		return nil, fmt.Errorf("could not create client: %w", err)
 	}
 
 	result := kustomizev1.KustomizationList{}
-	if err := client.List(ctx, &result); err != nil {
+
+	if err := c.List(ctx, &result, namespaceOpts(msg.Namespace)); err != nil {
 		return nil, fmt.Errorf("could not list kustomizations: %w", err)
 	}
 
@@ -175,7 +209,7 @@ func (s *Server) ListSources(ctx context.Context, msg *pb.ListSourcesReq) (*pb.L
 		return nil, fmt.Errorf("could not get source type: %w", err)
 	}
 
-	if err := client.List(ctx, k8sList); err != nil {
+	if err := client.List(ctx, k8sList, namespaceOpts(msg.Namespace)); err != nil {
 		if apierrors.IsNotFound(err) {
 			return res, nil
 		}
@@ -232,7 +266,7 @@ func (s *Server) SyncKustomization(ctx context.Context, msg *pb.SyncKustomizatio
 
 	name := types.NamespacedName{
 		Name:      msg.KustomizationName,
-		Namespace: msg.KustomizationNamespace,
+		Namespace: msg.Namespace,
 	}
 	kustomization := kustomizev1.Kustomization{}
 

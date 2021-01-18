@@ -18,9 +18,9 @@ const Styled = (c) => styled(c)``;
 function KustomizationDetail({ className }: Props) {
   const [syncing, setSyncing] = React.useState(false);
   const { kustomizationId } = useParams<{ kustomizationId: string }>();
-  const { currentContext } = useKubernetesContexts();
+  const { currentContext, currentNamespace } = useKubernetesContexts();
 
-  const kustomizations = useKustomizations();
+  const kustomizations = useKustomizations(currentContext, currentNamespace);
   const kustomizationDetail = kustomizations[kustomizationId];
 
   const handleSyncClicked = () => {
@@ -31,9 +31,9 @@ function KustomizationDetail({ className }: Props) {
     clusters
       .syncKustomization({
         contextname: currentContext,
+        namespace: currentNamespace,
         withsource: false,
         kustomizationname: kustomizationId,
-        kustomizationnamespace: "flux-system",
       })
       .then((res) => {
         setSyncing(false);

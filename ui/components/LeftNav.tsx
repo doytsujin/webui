@@ -1,6 +1,7 @@
 import {
   FormControl,
   InputLabel,
+  Menu,
   MenuItem,
   Select,
   Tab,
@@ -26,6 +27,8 @@ const navItems = [
   { value: PageRoute.HelmReleases, label: "Helm Releases" },
 ];
 
+const allNamespaces = "All Namespaces";
+
 const LinkTab = styled((props) => (
   <Tab
     component={React.forwardRef((p, ref) => (
@@ -48,8 +51,11 @@ const Styled = (cmp) => styled(cmp)`
 function LeftNav({ className }: Props) {
   const {
     contexts,
+    namespaces,
     currentContext,
+    currentNamespace,
     setCurrentContext,
+    setCurrentNamespace,
   } = useKubernetesContexts();
 
   const location = useLocation();
@@ -78,11 +84,36 @@ function LeftNav({ className }: Props) {
             label="Contexts"
           >
             {_.map(contexts, (c) => (
-              <MenuItem value={c.name} key={c.name}>
+              <MenuItem value={c.name || ""} key={c.name}>
                 {c.name}
               </MenuItem>
             ))}
           </Select>
+        </FormControl>
+        <FormControl>
+          <InputLabel id="namespaces-selector">Namespace</InputLabel>
+          {namespaces.length > 0 && (
+            <Select
+              onChange={(ev) => {
+                const nextNs =
+                  ev.target.value === allNamespaces ? "" : ev.target.value;
+                setCurrentNamespace(nextNs as string);
+              }}
+              // Avoid a material-ui warning
+              value={currentNamespace || allNamespaces}
+              id="namespaces-selector"
+              label="Namespace"
+            >
+              {_.map(namespaces, (ns) => {
+                const label = ns === "" ? allNamespaces : ns;
+                return (
+                  <MenuItem value={label} key={label}>
+                    {label}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          )}
         </FormControl>
       </div>
       <div>

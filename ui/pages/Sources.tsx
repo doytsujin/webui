@@ -2,7 +2,7 @@ import { Tab, Tabs } from "@material-ui/core";
 import * as React from "react";
 import _ from "lodash";
 import styled from "styled-components";
-import { useSources, SourceType } from "../lib/hooks";
+import { useSources, SourceType, useKubernetesContexts } from "../lib/hooks";
 import Link from "../components/Link";
 import { PageRoute } from "../lib/util";
 
@@ -22,8 +22,9 @@ const TabPanel = ({ value, children, index }) => (
 );
 
 function Sources({ className }: Props) {
+  const { currentContext, currentNamespace } = useKubernetesContexts();
   const [selectedTab, setTab] = React.useState(SourceType.Git);
-  const sources = useSources(selectedTab);
+  const sources = useSources(currentContext, currentNamespace, selectedTab);
 
   return (
     <div className={className}>
