@@ -31,9 +31,9 @@ function KustomizationDetail({ className }: Props) {
     clusters
       .syncKustomization({
         contextname: currentContext,
-        namespace: currentNamespace,
+        namespace: kustomizationDetail.namespace,
         withsource: false,
-        kustomizationname: kustomizationId,
+        kustomizationname: kustomizationDetail.name,
       })
       .then((res) => {
         setSyncing(false);
@@ -53,18 +53,16 @@ function KustomizationDetail({ className }: Props) {
           {kustomizationDetail.sourceref}
         </Link>
       </p>
-      <p>
-        <div>
-          <Button
-            onClick={handleSyncClicked}
-            color="primary"
-            disabled={syncing}
-            variant="contained"
-          >
-            {syncing ? <CircularProgress size={24} /> : "Sync"}
-          </Button>
-        </div>
-      </p>
+      <div>
+        <Button
+          onClick={handleSyncClicked}
+          color="primary"
+          disabled={syncing}
+          variant="contained"
+        >
+          {syncing ? <CircularProgress size={24} /> : "Sync"}
+        </Button>
+      </div>
       <div>
         Conditions:{" "}
         <ul>
