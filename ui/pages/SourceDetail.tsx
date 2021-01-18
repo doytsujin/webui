@@ -2,7 +2,7 @@ import * as React from "react";
 import _ from "lodash";
 import { useParams } from "react-router";
 import styled from "styled-components";
-import { SourceType, useSources } from "../lib/hooks";
+import { SourceType, useKubernetesContexts, useSources } from "../lib/hooks";
 
 type Props = {
   className?: string;
@@ -29,7 +29,9 @@ function SourceDetail({ className }: Props) {
     sourceType: SourceType;
     sourceId: string;
   }>();
-  const sources = useSources(sourceType);
+  const { currentContext, currentNamespace } = useKubernetesContexts();
+  const sources = useSources(currentContext, currentNamespace, sourceType);
+
   const sourceDetail = _.find(sources, { name: sourceId });
 
   if (!sourceDetail) {

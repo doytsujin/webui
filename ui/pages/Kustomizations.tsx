@@ -10,7 +10,8 @@ type Props = {
 const Styled = (c) => styled(c)``;
 
 function Kustomizations({ className }: Props) {
-  const kustomizations = useKustomizations();
+  const { currentContext, currentNamespace } = useKubernetesContexts();
+  const kustomizations = useKustomizations(currentContext, currentNamespace);
 
   return (
     <div className={className}>

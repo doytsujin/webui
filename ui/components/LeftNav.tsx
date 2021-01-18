@@ -1,6 +1,7 @@
 import {
   FormControl,
   InputLabel,
+  Menu,
   MenuItem,
   Select,
   Tab,
@@ -25,6 +26,8 @@ const navItems = [
   { value: "kustomizations", label: "Kustomizations" },
   { value: "helm_releases", label: "Helm Releases" },
 ];
+
+const allNamespaces = "All Namespaces";
 
 const LinkTab = styled((props) => (
   <Tab
@@ -89,21 +92,28 @@ function LeftNav({ className }: Props) {
         </FormControl>
         <FormControl>
           <InputLabel id="namespaces-selector">Namespace</InputLabel>
-          <Select
-            onChange={(ev) => {
-              setCurrentNamespace(ev.target.value as string);
-            }}
-            // Avoid a material-ui warning
-            value={namespaces.length === 0 ? "" : currentNamespace}
-            id="namespaces-selector"
-            label="Namespace"
-          >
-            {_.map(namespaces, (ns) => (
-              <MenuItem value={ns} key={ns}>
-                {ns}
-              </MenuItem>
-            ))}
-          </Select>
+          {namespaces.length > 0 && (
+            <Select
+              onChange={(ev) => {
+                const nextNs =
+                  ev.target.value === allNamespaces ? "" : ev.target.value;
+                setCurrentNamespace(nextNs as string);
+              }}
+              // Avoid a material-ui warning
+              value={currentNamespace || allNamespaces}
+              id="namespaces-selector"
+              label="Namespace"
+            >
+              {_.map(namespaces, (ns) => {
+                const label = ns === "" ? allNamespaces : ns;
+                return (
+                  <MenuItem value={label} key={label}>
+                    {label}
+                  </MenuItem>
+                );
+              })}
+            </Select>
+          )}
         </FormControl>
       </div>
       <div>

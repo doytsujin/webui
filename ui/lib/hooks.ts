@@ -8,6 +8,7 @@ import {
   Kustomization,
   Source,
 } from "./rpc/clusters";
+import { AllNamespacesOption, NamespaceLabel } from "./types";
 import { normalizePath, wrappedFetch } from "./util";
 
 const clusters = new DefaultClusters("/api/clusters", wrappedFetch);
@@ -47,11 +48,17 @@ export function useKubernetesContexts(): {
 
       const nsRes = await getNamespaces(nextCtx);
 
+      const nextNamespaces = nsRes.namespaces;
+
+      nextNamespaces.unshift(AllNamespacesOption);
+
       setNamespaces({
         ...namespaces,
-        ...{ [nextCtx]: nsRes.namespaces },
+        ...{
+          [nextCtx]: nextNamespaces,
+        },
       });
-      setCurrentNamespace(nsRes.namespaces[0]);
+      setCurrentNamespace(nextNamespaces[0]);
     })();
   }, [currentContext]);
 
@@ -67,10 +74,11 @@ export function useKubernetesContexts(): {
 
 type KustomizationList = { [name: string]: Kustomization };
 
-export function useKustomizations(): KustomizationList {
+export function useKustomizations(
+  currentContext: string,
+  currentNamespace: string
+): KustomizationList {
   const [kustomizations, setKustomizations] = useState({} as KustomizationList);
-
-  const { currentContext, currentNamespace } = useKubernetesContexts();
 
   useEffect(() => {
     if (!currentContext) {
@@ -86,7 +94,7 @@ export function useKustomizations(): KustomizationList {
         setKustomizations(r);
       })
       .catch((e) => console.error(e));
-  }, [currentContext]);
+  }, [currentContext, currentNamespace]);
 
   return kustomizations;
 }
@@ -97,13 +105,16 @@ export enum SourceType {
   Helm = "helm",
 }
 
-export function useSources(sourceType: SourceType): Source[] {
+export function useSources(
+  currentContext: string,
+  currentNamespace: string,
+  sourceType: SourceType
+): Source[] {
   const [sources, setSources] = useState({
     [SourceType.Git]: [],
     [SourceType.Bucket]: [],
     [SourceType.Helm]: [],
   });
-  const { currentContext, currentNamespace } = useKubernetesContexts();
 
   useEffect(() => {
     if (!currentContext) {
@@ -120,7 +131,7 @@ export function useSources(sourceType: SourceType): Source[] {
         setSources({ ...sources, ...{ [sourceType]: res.sources } });
       })
       .catch((e) => console.error(e));
-  }, [currentContext, sourceType]);
+  }, [currentContext, currentNamespace, sourceType]);
 
   return sources[sourceType];
 }
