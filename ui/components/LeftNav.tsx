@@ -14,16 +14,16 @@ import { useHistory, useLocation, useParams } from "react-router-dom";
 import { useKubernetesContexts } from "../lib/hooks";
 import Logo from "./Logo";
 import Link from "./Link";
-import { normalizePath } from "../lib/util";
+import { normalizePath, PageRoute } from "../lib/util";
 
 type Props = {
   className?: string;
 };
 
 const navItems = [
-  { value: "sources", label: "Sources" },
-  { value: "kustomizations", label: "Kustomizations" },
-  { value: "helm_releases", label: "Helm Releases" },
+  { value: PageRoute.Sources, label: "Sources" },
+  { value: PageRoute.Kustomizations, label: "Kustomizations" },
+  { value: PageRoute.HelmReleases, label: "Helm Releases" },
 ];
 
 const LinkTab = styled((props) => (
@@ -96,7 +96,7 @@ function LeftNav({ className }: Props) {
               value={n.value}
               key={n.value}
               label={n.label}
-              to={`/${n.value}`}
+              route={n.value}
             />
           ))}
         </Tabs>

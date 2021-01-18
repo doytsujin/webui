@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	helmv2 "github.com/fluxcd/helm-controller/api/v2beta1"
 	kustomizev1 "github.com/fluxcd/kustomize-controller/api/v1beta1"
 	"github.com/fluxcd/pkg/apis/meta"
 	sourcev1 "github.com/fluxcd/source-controller/api/v1beta1"
@@ -165,6 +166,7 @@ func (s *Server) ListSources(ctx context.Context, msg *pb.ListSourcesReq) (*pb.L
 	if err != nil {
 		return nil, fmt.Errorf("could not create client: %w", err)
 	}
+
 	res := &pb.ListSourcesRes{Sources: []*pb.Source{}}
 
 	k8sList, err := getSourceType(msg.SourceType)
@@ -228,10 +230,6 @@ func checkKustomizationSync(ctx context.Context, c client.Client, name types.Nam
 func (s *Server) SyncKustomization(ctx context.Context, msg *pb.SyncKustomizationReq) (*pb.SyncKustomizationRes, error) {
 	client, err := s.getClient(msg.ContextName)
 
-	if err != nil {
-		return nil, fmt.Errorf("could not create client: %w", err)
-	}
-
 	name := types.NamespacedName{
 		Name:      msg.KustomizationName,
 		Namespace: msg.KustomizationNamespace,
@@ -275,4 +273,31 @@ func (s *Server) SyncKustomization(ctx context.Context, msg *pb.SyncKustomizatio
 	}
 
 	return &pb.SyncKustomizationRes{Ok: true}, nil
+
+}
+
+func (s *Server) ListHelmReleases(ctx context.Context, msg *pb.ListHelmReleasesReq) (*pb.ListHelmReleasesRes, error) {
+	c, err := s.getClient(msg.ContextName)
+
+	if err != nil {
+		return nil, fmt.Errorf("could not create client: %w", err)
+	}
+
+	res := &pb.ListHelmReleasesRes{HelmReleases: []*pb.HelmRelease{}}
+
+	list := helmv2.HelmReleaseList{}
+
+	if err := c.List(ctx, &list, &client.ListOptions{Namespace: msg.Namespace}); err != nil {
+		if apierrors.IsNotFound(err) {
+			return res, nil
+		}
+
+		return nil, fmt.Errorf("could not list helm releases: %w", err)
+	}
+
+	for _, r := range list.Items {
+		res.HelmReleases = append(res.HelmReleases, &pb.HelmRelease{Name: r.Name})
+	}
+
+	return res, nil
 }

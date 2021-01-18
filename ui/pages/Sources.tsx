@@ -4,6 +4,7 @@ import _ from "lodash";
 import styled from "styled-components";
 import { useSources, SourceType } from "../lib/hooks";
 import Link from "../components/Link";
+import { PageRoute } from "../lib/util";
 
 type Props = {
   className?: string;
@@ -43,7 +44,9 @@ function Sources({ className }: Props) {
             <ul>
               {_.map(sources, (s) => (
                 <li key={s.name}>
-                  <Link to={`/sources/${selectedTab}/${s.name}`}>{s.name}</Link>
+                  <Link route={PageRoute.Sources} params={[t.value, s.name]}>
+                    {s.name}
+                  </Link>
                 </li>
               ))}
             </ul>

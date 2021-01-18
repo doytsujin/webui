@@ -8,6 +8,7 @@ service Clusters {
     rpc ListKustomizations (ListKustomizationsReq) returns (ListKustomizationsRes);
     rpc ListSources (ListSourcesReq) returns (ListSourcesRes);
     rpc SyncKustomization (SyncKustomizationReq) returns (SyncKustomizationRes);
+    rpc ListHelmReleases (ListHelmReleasesReq) returns (ListHelmReleasesRes);
 }
 
 message Context {
@@ -79,6 +80,7 @@ message ListSourcesRes {
     repeated Source sources  = 1;
 }
 
+
 message SyncKustomizationReq {
     string contextName = 1;
     string kustomizationName = 2;
@@ -88,4 +90,17 @@ message SyncKustomizationReq {
 
 message SyncKustomizationRes {
     bool ok = 1;
+}
+message HelmRelease {
+    string name = 1;
+    string namespace = 2;
+}
+
+message ListHelmReleasesReq {
+    string contextName = 1;
+    string namespace = 2;
+}
+
+message ListHelmReleasesRes {
+    repeated HelmRelease helm_releases = 1;
 }

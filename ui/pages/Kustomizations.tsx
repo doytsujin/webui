@@ -3,6 +3,7 @@ import _ from "lodash";
 import styled from "styled-components";
 import { useKubernetesContexts, useKustomizations } from "../lib/hooks";
 import Link from "../components/Link";
+import { PageRoute } from "../lib/util";
 
 type Props = {
   className?: string;
@@ -17,7 +18,9 @@ function Kustomizations({ className }: Props) {
       <ul>
         {_.map(kustomizations, (v, k) => (
           <li key={v.name}>
-            <Link to={`/kustomizations/${v.name}`}>{v.name}</Link>
+            <Link route={PageRoute.Kustomizations} params={[v.name]}>
+              {v.name}
+            </Link>
           </li>
         ))}
       </ul>
