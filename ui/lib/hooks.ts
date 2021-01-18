@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { AppContext } from "../components/AppStateProvider";
 import {
@@ -37,31 +37,40 @@ export function useKubernetesContexts(): {
     setCurrentNamespace,
   } = useContext(AppContext);
 
+  const [pathContext, pathNamespace] = normalizePath(location.pathname);
+
   useEffect(() => {
     (async () => {
       const res = await clusters.listContexts({});
-      const [pathContext] = normalizePath(location.pathname);
+
       setContexts(res.contexts);
       // If there is a context in the path, use that, else use the one set
       // in the .kubeconfig file returned by the backend.
       const nextCtx = (pathContext as string) || (res.currentcontext as string);
       setCurrentContext(nextCtx);
+    })();
+  }, []);
 
-      const nsRes = await getNamespaces(nextCtx);
+  useEffect(() => {
+    (async () => {
+      const nsRes = await getNamespaces(currentContext);
 
       const nextNamespaces = nsRes.namespaces;
 
       nextNamespaces.unshift(AllNamespacesOption);
 
+      // setCurrentNamespace(
+      //   pathNamespace === "all" ? nextNamespaces[0] : pathNamespace
+      // );
+
       setNamespaces({
         ...namespaces,
         ...{
-          [nextCtx]: nextNamespaces,
+          [currentContext]: nextNamespaces,
         },
       });
-      setCurrentNamespace(nextNamespaces[0]);
     })();
-  }, [currentContext]);
+  }, [currentContext, currentNamespace]);
 
   return {
     contexts,
