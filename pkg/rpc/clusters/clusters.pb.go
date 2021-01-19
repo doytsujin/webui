@@ -71,7 +71,7 @@ func (x Source_Type) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Source_Type.Descriptor instead.
 func (Source_Type) EnumDescriptor() ([]byte, []int) {
-	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{10, 0}
+	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{11, 0}
 }
 
 type Context struct {
@@ -679,24 +679,109 @@ func (x *GitRepositoryRef) GetCommit() string {
 	return ""
 }
 
+type Artifact struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Checksum     string `protobuf:"bytes,1,opt,name=checksum,proto3" json:"checksum,omitempty"`
+	Lastupdateat int32  `protobuf:"varint,2,opt,name=lastupdateat,proto3" json:"lastupdateat,omitempty"`
+	Path         string `protobuf:"bytes,3,opt,name=path,proto3" json:"path,omitempty"`
+	Revision     string `protobuf:"bytes,4,opt,name=revision,proto3" json:"revision,omitempty"`
+	Url          string `protobuf:"bytes,5,opt,name=url,proto3" json:"url,omitempty"`
+}
+
+func (x *Artifact) Reset() {
+	*x = Artifact{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Artifact) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Artifact) ProtoMessage() {}
+
+func (x *Artifact) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Artifact.ProtoReflect.Descriptor instead.
+func (*Artifact) Descriptor() ([]byte, []int) {
+	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *Artifact) GetChecksum() string {
+	if x != nil {
+		return x.Checksum
+	}
+	return ""
+}
+
+func (x *Artifact) GetLastupdateat() int32 {
+	if x != nil {
+		return x.Lastupdateat
+	}
+	return 0
+}
+
+func (x *Artifact) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
+func (x *Artifact) GetRevision() string {
+	if x != nil {
+		return x.Revision
+	}
+	return ""
+}
+
+func (x *Artifact) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
 type Source struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name       string            `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Url        string            `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
-	Reference  *GitRepositoryRef `protobuf:"bytes,3,opt,name=reference,proto3" json:"reference,omitempty"`
-	Type       Source_Type       `protobuf:"varint,4,opt,name=type,proto3,enum=clusters.Source_Type" json:"type,omitempty"`
-	Provider   string            `protobuf:"bytes,5,opt,name=provider,proto3" json:"provider,omitempty"`
-	Bucketname string            `protobuf:"bytes,6,opt,name=bucketname,proto3" json:"bucketname,omitempty"`
-	Region     string            `protobuf:"bytes,7,opt,name=region,proto3" json:"region,omitempty"`
+	Name              string            `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Url               string            `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`
+	Reference         *GitRepositoryRef `protobuf:"bytes,3,opt,name=reference,proto3" json:"reference,omitempty"`
+	Type              Source_Type       `protobuf:"varint,4,opt,name=type,proto3,enum=clusters.Source_Type" json:"type,omitempty"`
+	Provider          string            `protobuf:"bytes,5,opt,name=provider,proto3" json:"provider,omitempty"`
+	Bucketname        string            `protobuf:"bytes,6,opt,name=bucketname,proto3" json:"bucketname,omitempty"`
+	Region            string            `protobuf:"bytes,7,opt,name=region,proto3" json:"region,omitempty"`
+	Namespace         string            `protobuf:"bytes,8,opt,name=namespace,proto3" json:"namespace,omitempty"`
+	Gitimplementation string            `protobuf:"bytes,9,opt,name=gitimplementation,proto3" json:"gitimplementation,omitempty"`
+	Timeout           string            `protobuf:"bytes,10,opt,name=timeout,proto3" json:"timeout,omitempty"`
+	SecretRefName     string            `protobuf:"bytes,11,opt,name=secretRefName,proto3" json:"secretRefName,omitempty"`
+	Conditions        []*Condition      `protobuf:"bytes,12,rep,name=conditions,proto3" json:"conditions,omitempty"`
+	Artifact          *Artifact         `protobuf:"bytes,13,opt,name=artifact,proto3" json:"artifact,omitempty"`
 }
 
 func (x *Source) Reset() {
 	*x = Source{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[10]
+		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -709,7 +794,7 @@ func (x *Source) String() string {
 func (*Source) ProtoMessage() {}
 
 func (x *Source) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[10]
+	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -722,7 +807,7 @@ func (x *Source) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Source.ProtoReflect.Descriptor instead.
 func (*Source) Descriptor() ([]byte, []int) {
-	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{10}
+	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *Source) GetName() string {
@@ -774,6 +859,48 @@ func (x *Source) GetRegion() string {
 	return ""
 }
 
+func (x *Source) GetNamespace() string {
+	if x != nil {
+		return x.Namespace
+	}
+	return ""
+}
+
+func (x *Source) GetGitimplementation() string {
+	if x != nil {
+		return x.Gitimplementation
+	}
+	return ""
+}
+
+func (x *Source) GetTimeout() string {
+	if x != nil {
+		return x.Timeout
+	}
+	return ""
+}
+
+func (x *Source) GetSecretRefName() string {
+	if x != nil {
+		return x.SecretRefName
+	}
+	return ""
+}
+
+func (x *Source) GetConditions() []*Condition {
+	if x != nil {
+		return x.Conditions
+	}
+	return nil
+}
+
+func (x *Source) GetArtifact() *Artifact {
+	if x != nil {
+		return x.Artifact
+	}
+	return nil
+}
+
 type ListSourcesReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -787,7 +914,7 @@ type ListSourcesReq struct {
 func (x *ListSourcesReq) Reset() {
 	*x = ListSourcesReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[11]
+		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -800,7 +927,7 @@ func (x *ListSourcesReq) String() string {
 func (*ListSourcesReq) ProtoMessage() {}
 
 func (x *ListSourcesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[11]
+	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -813,7 +940,7 @@ func (x *ListSourcesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSourcesReq.ProtoReflect.Descriptor instead.
 func (*ListSourcesReq) Descriptor() ([]byte, []int) {
-	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{11}
+	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ListSourcesReq) GetContextName() string {
@@ -848,7 +975,7 @@ type ListSourcesRes struct {
 func (x *ListSourcesRes) Reset() {
 	*x = ListSourcesRes{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[12]
+		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -861,7 +988,7 @@ func (x *ListSourcesRes) String() string {
 func (*ListSourcesRes) ProtoMessage() {}
 
 func (x *ListSourcesRes) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[12]
+	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -874,7 +1001,7 @@ func (x *ListSourcesRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSourcesRes.ProtoReflect.Descriptor instead.
 func (*ListSourcesRes) Descriptor() ([]byte, []int) {
-	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{12}
+	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ListSourcesRes) GetSources() []*Source {
@@ -898,7 +1025,7 @@ type SyncKustomizationReq struct {
 func (x *SyncKustomizationReq) Reset() {
 	*x = SyncKustomizationReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[13]
+		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -911,7 +1038,7 @@ func (x *SyncKustomizationReq) String() string {
 func (*SyncKustomizationReq) ProtoMessage() {}
 
 func (x *SyncKustomizationReq) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[13]
+	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -924,7 +1051,7 @@ func (x *SyncKustomizationReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncKustomizationReq.ProtoReflect.Descriptor instead.
 func (*SyncKustomizationReq) Descriptor() ([]byte, []int) {
-	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{13}
+	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *SyncKustomizationReq) GetContextName() string {
@@ -966,7 +1093,7 @@ type SyncKustomizationRes struct {
 func (x *SyncKustomizationRes) Reset() {
 	*x = SyncKustomizationRes{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[14]
+		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -979,7 +1106,7 @@ func (x *SyncKustomizationRes) String() string {
 func (*SyncKustomizationRes) ProtoMessage() {}
 
 func (x *SyncKustomizationRes) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[14]
+	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -992,7 +1119,7 @@ func (x *SyncKustomizationRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SyncKustomizationRes.ProtoReflect.Descriptor instead.
 func (*SyncKustomizationRes) Descriptor() ([]byte, []int) {
-	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{14}
+	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *SyncKustomizationRes) GetOk() bool {
@@ -1014,7 +1141,7 @@ type HelmRelease struct {
 func (x *HelmRelease) Reset() {
 	*x = HelmRelease{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[15]
+		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1027,7 +1154,7 @@ func (x *HelmRelease) String() string {
 func (*HelmRelease) ProtoMessage() {}
 
 func (x *HelmRelease) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[15]
+	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1040,7 +1167,7 @@ func (x *HelmRelease) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HelmRelease.ProtoReflect.Descriptor instead.
 func (*HelmRelease) Descriptor() ([]byte, []int) {
-	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{15}
+	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *HelmRelease) GetName() string {
@@ -1069,7 +1196,7 @@ type ListHelmReleasesReq struct {
 func (x *ListHelmReleasesReq) Reset() {
 	*x = ListHelmReleasesReq{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[16]
+		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[17]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1082,7 +1209,7 @@ func (x *ListHelmReleasesReq) String() string {
 func (*ListHelmReleasesReq) ProtoMessage() {}
 
 func (x *ListHelmReleasesReq) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[16]
+	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[17]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1095,7 +1222,7 @@ func (x *ListHelmReleasesReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListHelmReleasesReq.ProtoReflect.Descriptor instead.
 func (*ListHelmReleasesReq) Descriptor() ([]byte, []int) {
-	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{16}
+	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *ListHelmReleasesReq) GetContextName() string {
@@ -1123,7 +1250,7 @@ type ListHelmReleasesRes struct {
 func (x *ListHelmReleasesRes) Reset() {
 	*x = ListHelmReleasesRes{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[17]
+		mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1136,7 +1263,7 @@ func (x *ListHelmReleasesRes) String() string {
 func (*ListHelmReleasesRes) ProtoMessage() {}
 
 func (x *ListHelmReleasesRes) ProtoReflect() protoreflect.Message {
-	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[17]
+	mi := &file_pkg_rpc_clusters_clusters_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1149,7 +1276,7 @@ func (x *ListHelmReleasesRes) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListHelmReleasesRes.ProtoReflect.Descriptor instead.
 func (*ListHelmReleasesRes) Descriptor() ([]byte, []int) {
-	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{17}
+	return file_pkg_rpc_clusters_clusters_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *ListHelmReleasesRes) GetHelmReleases() []*HelmRelease {
@@ -1232,22 +1359,46 @@ var file_pkg_rpc_clusters_clusters_proto_rawDesc = []byte{
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x74, 0x61, 0x67, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x65, 0x6d,
 	0x76, 0x65, 0x72, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x73, 0x65, 0x6d, 0x76, 0x65,
 	0x72, 0x12, 0x16, 0x0a, 0x06, 0x63, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x06, 0x63, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x22, 0x8e, 0x02, 0x0a, 0x06, 0x53, 0x6f,
-	0x75, 0x72, 0x63, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x6c, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x6c, 0x12, 0x38, 0x0a, 0x09, 0x72, 0x65,
-	0x66, 0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e,
-	0x63, 0x6c, 0x75, 0x73, 0x74, 0x65, 0x72, 0x73, 0x2e, 0x47, 0x69, 0x74, 0x52, 0x65, 0x70, 0x6f,
-	0x73, 0x69, 0x74, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x66, 0x52, 0x09, 0x72, 0x65, 0x66, 0x65, 0x72,
-	0x65, 0x6e, 0x63, 0x65, 0x12, 0x29, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x04, 0x20, 0x01,
-	0x28, 0x0e, 0x32, 0x15, 0x2e, 0x63, 0x6c, 0x75, 0x73, 0x74, 0x65, 0x72, 0x73, 0x2e, 0x53, 0x6f,
-	0x75, 0x72, 0x63, 0x65, 0x2e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12,
-	0x1a, 0x0a, 0x08, 0x70, 0x72, 0x6f, 0x76, 0x69, 0x64, 0x65, 0x72, 0x18, 0x05, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x08, 0x70, 0x72, 0x6f, 0x76, 0x69, 0x64, 0x65, 0x72, 0x12, 0x1e, 0x0a, 0x0a, 0x62,
-	0x75, 0x63, 0x6b, 0x65, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x0a, 0x62, 0x75, 0x63, 0x6b, 0x65, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x72,
-	0x65, 0x67, 0x69, 0x6f, 0x6e, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x65, 0x67,
-	0x69, 0x6f, 0x6e, 0x22, 0x25, 0x0a, 0x04, 0x54, 0x79, 0x70, 0x65, 0x12, 0x07, 0x0a, 0x03, 0x47,
+	0x09, 0x52, 0x06, 0x63, 0x6f, 0x6d, 0x6d, 0x69, 0x74, 0x22, 0x8c, 0x01, 0x0a, 0x08, 0x41, 0x72,
+	0x74, 0x69, 0x66, 0x61, 0x63, 0x74, 0x12, 0x1a, 0x0a, 0x08, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x73,
+	0x75, 0x6d, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x73,
+	0x75, 0x6d, 0x12, 0x22, 0x0a, 0x0c, 0x6c, 0x61, 0x73, 0x74, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65,
+	0x61, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0c, 0x6c, 0x61, 0x73, 0x74, 0x75, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x61, 0x74, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x61, 0x74, 0x68, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x70, 0x61, 0x74, 0x68, 0x12, 0x1a, 0x0a, 0x08, 0x72, 0x65,
+	0x76, 0x69, 0x73, 0x69, 0x6f, 0x6e, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x72, 0x65,
+	0x76, 0x69, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x6c, 0x18, 0x05, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x6c, 0x22, 0xff, 0x03, 0x0a, 0x06, 0x53, 0x6f, 0x75,
+	0x72, 0x63, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x6c, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x6c, 0x12, 0x38, 0x0a, 0x09, 0x72, 0x65, 0x66,
+	0x65, 0x72, 0x65, 0x6e, 0x63, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x63,
+	0x6c, 0x75, 0x73, 0x74, 0x65, 0x72, 0x73, 0x2e, 0x47, 0x69, 0x74, 0x52, 0x65, 0x70, 0x6f, 0x73,
+	0x69, 0x74, 0x6f, 0x72, 0x79, 0x52, 0x65, 0x66, 0x52, 0x09, 0x72, 0x65, 0x66, 0x65, 0x72, 0x65,
+	0x6e, 0x63, 0x65, 0x12, 0x29, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28,
+	0x0e, 0x32, 0x15, 0x2e, 0x63, 0x6c, 0x75, 0x73, 0x74, 0x65, 0x72, 0x73, 0x2e, 0x53, 0x6f, 0x75,
+	0x72, 0x63, 0x65, 0x2e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x1a,
+	0x0a, 0x08, 0x70, 0x72, 0x6f, 0x76, 0x69, 0x64, 0x65, 0x72, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x08, 0x70, 0x72, 0x6f, 0x76, 0x69, 0x64, 0x65, 0x72, 0x12, 0x1e, 0x0a, 0x0a, 0x62, 0x75,
+	0x63, 0x6b, 0x65, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0a,
+	0x62, 0x75, 0x63, 0x6b, 0x65, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x72, 0x65,
+	0x67, 0x69, 0x6f, 0x6e, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x72, 0x65, 0x67, 0x69,
+	0x6f, 0x6e, 0x12, 0x1c, 0x0a, 0x09, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x70, 0x61, 0x63, 0x65, 0x18,
+	0x08, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x6e, 0x61, 0x6d, 0x65, 0x73, 0x70, 0x61, 0x63, 0x65,
+	0x12, 0x2c, 0x0a, 0x11, 0x67, 0x69, 0x74, 0x69, 0x6d, 0x70, 0x6c, 0x65, 0x6d, 0x65, 0x6e, 0x74,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x09, 0x20, 0x01, 0x28, 0x09, 0x52, 0x11, 0x67, 0x69, 0x74,
+	0x69, 0x6d, 0x70, 0x6c, 0x65, 0x6d, 0x65, 0x6e, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x18,
+	0x0a, 0x07, 0x74, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x07, 0x74, 0x69, 0x6d, 0x65, 0x6f, 0x75, 0x74, 0x12, 0x24, 0x0a, 0x0d, 0x73, 0x65, 0x63, 0x72,
+	0x65, 0x74, 0x52, 0x65, 0x66, 0x4e, 0x61, 0x6d, 0x65, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x0d, 0x73, 0x65, 0x63, 0x72, 0x65, 0x74, 0x52, 0x65, 0x66, 0x4e, 0x61, 0x6d, 0x65, 0x12, 0x33,
+	0x0a, 0x0a, 0x63, 0x6f, 0x6e, 0x64, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x0c, 0x20, 0x03,
+	0x28, 0x0b, 0x32, 0x13, 0x2e, 0x63, 0x6c, 0x75, 0x73, 0x74, 0x65, 0x72, 0x73, 0x2e, 0x43, 0x6f,
+	0x6e, 0x64, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x52, 0x0a, 0x63, 0x6f, 0x6e, 0x64, 0x69, 0x74, 0x69,
+	0x6f, 0x6e, 0x73, 0x12, 0x2e, 0x0a, 0x08, 0x61, 0x72, 0x74, 0x69, 0x66, 0x61, 0x63, 0x74, 0x18,
+	0x0d, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x63, 0x6c, 0x75, 0x73, 0x74, 0x65, 0x72, 0x73,
+	0x2e, 0x41, 0x72, 0x74, 0x69, 0x66, 0x61, 0x63, 0x74, 0x52, 0x08, 0x61, 0x72, 0x74, 0x69, 0x66,
+	0x61, 0x63, 0x74, 0x22, 0x25, 0x0a, 0x04, 0x54, 0x79, 0x70, 0x65, 0x12, 0x07, 0x0a, 0x03, 0x47,
 	0x69, 0x74, 0x10, 0x00, 0x12, 0x0a, 0x0a, 0x06, 0x42, 0x75, 0x63, 0x6b, 0x65, 0x74, 0x10, 0x01,
 	0x12, 0x08, 0x0a, 0x04, 0x48, 0x65, 0x6c, 0x6d, 0x10, 0x02, 0x22, 0x70, 0x0a, 0x0e, 0x4c, 0x69,
 	0x73, 0x74, 0x53, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x52, 0x65, 0x71, 0x12, 0x20, 0x0a, 0x0b,
@@ -1337,7 +1488,7 @@ func file_pkg_rpc_clusters_clusters_proto_rawDescGZIP() []byte {
 }
 
 var file_pkg_rpc_clusters_clusters_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_pkg_rpc_clusters_clusters_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
+var file_pkg_rpc_clusters_clusters_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_pkg_rpc_clusters_clusters_proto_goTypes = []interface{}{
 	(Source_Type)(0),                    // 0: clusters.Source.Type
 	(*Context)(nil),                     // 1: clusters.Context
@@ -1350,14 +1501,15 @@ var file_pkg_rpc_clusters_clusters_proto_goTypes = []interface{}{
 	(*ListKustomizationsReq)(nil),       // 8: clusters.ListKustomizationsReq
 	(*ListKustomizationsRes)(nil),       // 9: clusters.ListKustomizationsRes
 	(*GitRepositoryRef)(nil),            // 10: clusters.GitRepositoryRef
-	(*Source)(nil),                      // 11: clusters.Source
-	(*ListSourcesReq)(nil),              // 12: clusters.ListSourcesReq
-	(*ListSourcesRes)(nil),              // 13: clusters.ListSourcesRes
-	(*SyncKustomizationReq)(nil),        // 14: clusters.SyncKustomizationReq
-	(*SyncKustomizationRes)(nil),        // 15: clusters.SyncKustomizationRes
-	(*HelmRelease)(nil),                 // 16: clusters.HelmRelease
-	(*ListHelmReleasesReq)(nil),         // 17: clusters.ListHelmReleasesReq
-	(*ListHelmReleasesRes)(nil),         // 18: clusters.ListHelmReleasesRes
+	(*Artifact)(nil),                    // 11: clusters.Artifact
+	(*Source)(nil),                      // 12: clusters.Source
+	(*ListSourcesReq)(nil),              // 13: clusters.ListSourcesReq
+	(*ListSourcesRes)(nil),              // 14: clusters.ListSourcesRes
+	(*SyncKustomizationReq)(nil),        // 15: clusters.SyncKustomizationReq
+	(*SyncKustomizationRes)(nil),        // 16: clusters.SyncKustomizationRes
+	(*HelmRelease)(nil),                 // 17: clusters.HelmRelease
+	(*ListHelmReleasesReq)(nil),         // 18: clusters.ListHelmReleasesReq
+	(*ListHelmReleasesRes)(nil),         // 19: clusters.ListHelmReleasesRes
 }
 var file_pkg_rpc_clusters_clusters_proto_depIdxs = []int32{
 	1,  // 0: clusters.ListContextsRes.contexts:type_name -> clusters.Context
@@ -1366,25 +1518,27 @@ var file_pkg_rpc_clusters_clusters_proto_depIdxs = []int32{
 	7,  // 3: clusters.ListKustomizationsRes.kustomizations:type_name -> clusters.Kustomization
 	10, // 4: clusters.Source.reference:type_name -> clusters.GitRepositoryRef
 	0,  // 5: clusters.Source.type:type_name -> clusters.Source.Type
-	11, // 6: clusters.ListSourcesRes.sources:type_name -> clusters.Source
-	16, // 7: clusters.ListHelmReleasesRes.helm_releases:type_name -> clusters.HelmRelease
-	2,  // 8: clusters.Clusters.ListContexts:input_type -> clusters.ListContextsReq
-	4,  // 9: clusters.Clusters.ListNamespacesForContext:input_type -> clusters.ListNamespacesForContextReq
-	8,  // 10: clusters.Clusters.ListKustomizations:input_type -> clusters.ListKustomizationsReq
-	12, // 11: clusters.Clusters.ListSources:input_type -> clusters.ListSourcesReq
-	14, // 12: clusters.Clusters.SyncKustomization:input_type -> clusters.SyncKustomizationReq
-	17, // 13: clusters.Clusters.ListHelmReleases:input_type -> clusters.ListHelmReleasesReq
-	3,  // 14: clusters.Clusters.ListContexts:output_type -> clusters.ListContextsRes
-	5,  // 15: clusters.Clusters.ListNamespacesForContext:output_type -> clusters.ListNamespacesForContextRes
-	9,  // 16: clusters.Clusters.ListKustomizations:output_type -> clusters.ListKustomizationsRes
-	13, // 17: clusters.Clusters.ListSources:output_type -> clusters.ListSourcesRes
-	15, // 18: clusters.Clusters.SyncKustomization:output_type -> clusters.SyncKustomizationRes
-	18, // 19: clusters.Clusters.ListHelmReleases:output_type -> clusters.ListHelmReleasesRes
-	14, // [14:20] is the sub-list for method output_type
-	8,  // [8:14] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	6,  // 6: clusters.Source.conditions:type_name -> clusters.Condition
+	11, // 7: clusters.Source.artifact:type_name -> clusters.Artifact
+	12, // 8: clusters.ListSourcesRes.sources:type_name -> clusters.Source
+	17, // 9: clusters.ListHelmReleasesRes.helm_releases:type_name -> clusters.HelmRelease
+	2,  // 10: clusters.Clusters.ListContexts:input_type -> clusters.ListContextsReq
+	4,  // 11: clusters.Clusters.ListNamespacesForContext:input_type -> clusters.ListNamespacesForContextReq
+	8,  // 12: clusters.Clusters.ListKustomizations:input_type -> clusters.ListKustomizationsReq
+	13, // 13: clusters.Clusters.ListSources:input_type -> clusters.ListSourcesReq
+	15, // 14: clusters.Clusters.SyncKustomization:input_type -> clusters.SyncKustomizationReq
+	18, // 15: clusters.Clusters.ListHelmReleases:input_type -> clusters.ListHelmReleasesReq
+	3,  // 16: clusters.Clusters.ListContexts:output_type -> clusters.ListContextsRes
+	5,  // 17: clusters.Clusters.ListNamespacesForContext:output_type -> clusters.ListNamespacesForContextRes
+	9,  // 18: clusters.Clusters.ListKustomizations:output_type -> clusters.ListKustomizationsRes
+	14, // 19: clusters.Clusters.ListSources:output_type -> clusters.ListSourcesRes
+	16, // 20: clusters.Clusters.SyncKustomization:output_type -> clusters.SyncKustomizationRes
+	19, // 21: clusters.Clusters.ListHelmReleases:output_type -> clusters.ListHelmReleasesRes
+	16, // [16:22] is the sub-list for method output_type
+	10, // [10:16] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_pkg_rpc_clusters_clusters_proto_init() }
@@ -1514,7 +1668,7 @@ func file_pkg_rpc_clusters_clusters_proto_init() {
 			}
 		}
 		file_pkg_rpc_clusters_clusters_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Source); i {
+			switch v := v.(*Artifact); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1526,7 +1680,7 @@ func file_pkg_rpc_clusters_clusters_proto_init() {
 			}
 		}
 		file_pkg_rpc_clusters_clusters_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListSourcesReq); i {
+			switch v := v.(*Source); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1538,7 +1692,7 @@ func file_pkg_rpc_clusters_clusters_proto_init() {
 			}
 		}
 		file_pkg_rpc_clusters_clusters_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListSourcesRes); i {
+			switch v := v.(*ListSourcesReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1550,7 +1704,7 @@ func file_pkg_rpc_clusters_clusters_proto_init() {
 			}
 		}
 		file_pkg_rpc_clusters_clusters_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SyncKustomizationReq); i {
+			switch v := v.(*ListSourcesRes); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1562,7 +1716,7 @@ func file_pkg_rpc_clusters_clusters_proto_init() {
 			}
 		}
 		file_pkg_rpc_clusters_clusters_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*SyncKustomizationRes); i {
+			switch v := v.(*SyncKustomizationReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1574,7 +1728,7 @@ func file_pkg_rpc_clusters_clusters_proto_init() {
 			}
 		}
 		file_pkg_rpc_clusters_clusters_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*HelmRelease); i {
+			switch v := v.(*SyncKustomizationRes); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1586,7 +1740,7 @@ func file_pkg_rpc_clusters_clusters_proto_init() {
 			}
 		}
 		file_pkg_rpc_clusters_clusters_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListHelmReleasesReq); i {
+			switch v := v.(*HelmRelease); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1598,6 +1752,18 @@ func file_pkg_rpc_clusters_clusters_proto_init() {
 			}
 		}
 		file_pkg_rpc_clusters_clusters_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListHelmReleasesReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_rpc_clusters_clusters_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListHelmReleasesRes); i {
 			case 0:
 				return &v.state
@@ -1616,7 +1782,7 @@ func file_pkg_rpc_clusters_clusters_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pkg_rpc_clusters_clusters_proto_rawDesc,
 			NumEnums:      1,
-			NumMessages:   18,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

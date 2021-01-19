@@ -205,6 +205,8 @@ func appendSources(sourceType string, k8sObj runtime.Object, res *pb.ListSources
 	switch list := k8sObj.(type) {
 	case *sourcev1.GitRepositoryList:
 		for _, i := range list.Items {
+			artifact := i.Status.Artifact
+
 			res.Sources = append(res.Sources, &pb.Source{
 				Name: i.Name, Type: pb.Source_Git,
 				Url: i.Spec.URL,
@@ -213,6 +215,13 @@ func appendSources(sourceType string, k8sObj runtime.Object, res *pb.ListSources
 					Tag:    i.Spec.Reference.Tag,
 					Semver: i.Spec.Reference.SemVer,
 					Commit: i.Spec.Reference.Commit,
+				},
+				Artifact: &pb.Artifact{
+					Checksum:     artifact.Checksum,
+					Lastupdateat: int32(artifact.LastUpdateTime.Unix()),
+					Path:         artifact.Path,
+					Revision:     artifact.Revision,
+					Url:          artifact.URL,
 				},
 			})
 		}

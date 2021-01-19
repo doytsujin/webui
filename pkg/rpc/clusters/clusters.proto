@@ -71,6 +71,14 @@ message GitRepositoryRef {
     string commit = 4;
 }
 
+message Artifact {
+    string checksum  = 1;
+    int32 lastupdateat = 2;
+    string path = 3;
+    string revision = 4;
+    string url = 5;
+}
+
 message Source {
     string name = 1;
     string url = 2;
@@ -84,6 +92,12 @@ message Source {
     string provider = 5;
     string bucketname = 6;
     string region = 7;
+    string namespace = 8;
+    string gitimplementation = 9;
+    string timeout = 10;
+    string secretRefName = 11;
+    repeated Condition conditions = 12;
+    Artifact artifact = 13;
 }
 
 message ListSourcesReq {

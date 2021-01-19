@@ -3,6 +3,7 @@ import _ from "lodash";
 import { useParams } from "react-router";
 import styled from "styled-components";
 import { SourceType, useKubernetesContexts, useSources } from "../lib/hooks";
+import ConditionsTable from "../components/ConditionsTable";
 
 type Props = {
   className?: string;
@@ -40,13 +41,39 @@ function SourceDetail({ className }: Props) {
 
   const providerUrl = convertRefURLToGitProvider(sourceDetail.url);
 
+  console.log(sourceDetail);
+
   return (
     <div className={className}>
       <h2>{sourceDetail.name}</h2>
-      <p>{sourceDetail.url}</p>
-      <p>
-        <a href={providerUrl}>Provider Link</a>
-      </p>
+      <div>
+        <h3>Info</h3>
+        <p>Namespace: {sourceDetail.namespace}</p>
+        <p>
+          Url: <a href={providerUrl}>{sourceDetail.url}</a>{" "}
+        </p>
+      </div>
+
+      <div>
+        <h3>Git Reference</h3>
+        <p>Branch: {sourceDetail.reference.branch}</p>
+        <p>Tag: {sourceDetail.reference.tag}</p>
+        <p>Semver: {sourceDetail.reference.semver}</p>
+        <p>Commit: {sourceDetail.reference.commit}</p>
+      </div>
+      <div>
+        <h3>Artifact</h3>
+        <p>Checksum: {sourceDetail.artifact.checksum}</p>
+        <p>Last updated: {sourceDetail.artifact.lastupdateat}</p>
+        <p>Path: {sourceDetail.artifact.path}</p>
+        <p>Revision: {sourceDetail.artifact.revision}</p>
+        <p>Url: {sourceDetail.artifact.url}</p>
+      </div>
+
+      <div>
+        <h3>Conditions</h3>
+        <ConditionsTable conditions={sourceDetail.conditions} />
+      </div>
     </div>
   );
 }

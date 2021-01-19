@@ -240,6 +240,37 @@ const JSONToGitRepositoryRef = (m: GitRepositoryRef | GitRepositoryRefJSON): Git
     };
 };
 
+export interface Artifact {
+    checksum: string;
+    lastupdateat: number;
+    path: string;
+    revision: string;
+    url: string;
+    
+}
+
+interface ArtifactJSON {
+    checksum: string;
+    lastupdateat: number;
+    path: string;
+    revision: string;
+    url: string;
+    
+}
+
+
+const JSONToArtifact = (m: Artifact | ArtifactJSON): Artifact => {
+    
+    return {
+        checksum: m.checksum,
+        lastupdateat: m.lastupdateat,
+        path: m.path,
+        revision: m.revision,
+        url: m.url,
+        
+    };
+};
+
 export interface Source {
     name: string;
     url: string;
@@ -248,6 +279,12 @@ export interface Source {
     provider: string;
     bucketname: string;
     region: string;
+    namespace: string;
+    gitimplementation: string;
+    timeout: string;
+    secretrefname: string;
+    conditions: Condition[];
+    artifact: Artifact;
     
 }
 
@@ -259,6 +296,12 @@ interface SourceJSON {
     provider: string;
     bucketname: string;
     region: string;
+    namespace: string;
+    gitimplementation: string;
+    timeout: string;
+    secretRefName: string;
+    conditions: ConditionJSON[];
+    artifact: ArtifactJSON;
     
 }
 
@@ -273,6 +316,12 @@ const JSONToSource = (m: Source | SourceJSON): Source => {
         provider: m.provider,
         bucketname: m.bucketname,
         region: m.region,
+        namespace: m.namespace,
+        gitimplementation: m.gitimplementation,
+        timeout: m.timeout,
+        secretrefname: (((m as Source).secretrefname) ? (m as Source).secretrefname : (m as SourceJSON).secretRefName),
+        conditions: (m.conditions as (Condition | ConditionJSON)[]).map(JSONToCondition),
+        artifact: JSONToArtifact(m.artifact),
         
     };
 };
