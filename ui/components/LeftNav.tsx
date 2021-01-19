@@ -65,14 +65,14 @@ function LeftNav({ className }: Props) {
   return (
     <div className={className}>
       <div>
-        <Link to="/">
+        <Link route={PageRoute.Home}>
           <Logo />
         </Link>
       </div>
 
       <div>
         <FormControl>
-          <InputLabel id="context-selector">Contexts</InputLabel>
+          <InputLabel id="context-selector">Context</InputLabel>
           <Select
             onChange={(ev) => {
               const nextCtx = ev.target.value;

@@ -40,6 +40,7 @@ export function useKubernetesContexts(): {
   const [pathContext, pathNamespace] = normalizePath(location.pathname);
 
   useEffect(() => {
+    // Runs once on app startup.
     (async () => {
       const res = await clusters.listContexts({});
 
@@ -48,6 +49,7 @@ export function useKubernetesContexts(): {
       // in the .kubeconfig file returned by the backend.
       const nextCtx = (pathContext as string) || (res.currentcontext as string);
       setCurrentContext(nextCtx);
+      setCurrentNamespace(pathNamespace === "all" ? "" : pathNamespace);
     })();
   }, []);
 

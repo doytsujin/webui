@@ -2,6 +2,9 @@ import * as React from "react";
 import { useHistory } from "react-router";
 import styled from "styled-components";
 import { useKubernetesContexts } from "../lib/hooks";
+import { PageRoute } from "../lib/util";
+
+const defaultHomeRoute = PageRoute.Kustomizations;
 
 export default function Redirector() {
   const { currentContext, currentNamespace } = useKubernetesContexts();
@@ -12,7 +15,7 @@ export default function Redirector() {
       history.push(
         `/${currentContext}/${
           currentNamespace === "" ? "all" : currentNamespace
-        }/kustomizations`
+        }/${defaultHomeRoute}`
       );
     }
   });

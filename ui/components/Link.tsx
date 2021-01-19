@@ -7,7 +7,6 @@ type Props = {
   className?: string;
   route: PageRoute;
   params?: string[];
-  to: string;
   children: any;
   query?: object;
 };

@@ -52,6 +52,11 @@ export default function App() {
                   <Route exact path="/:context" component={Redirector} />
                   <Route
                     exact
+                    path="/:context/:namespace"
+                    component={Redirector}
+                  />
+                  <Route
+                    exact
                     path={prefixRoute(PageRoute.Kustomizations)}
                     component={Kustomizations}
                   />

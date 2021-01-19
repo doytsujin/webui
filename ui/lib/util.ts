@@ -20,10 +20,18 @@ export const prefixRoute = (route: string, ...idParams: string[]) =>
     idParams ? _.map(idParams, (p) => "/:" + p).join("") : ""
   }`;
 
-export const toRoute = (route: PageRoute, params: string[]) =>
-  `/${route}${params ? `/${_.map(params, (p) => `${p}/`).join("")}` : ""}`;
+export const toRoute = (route: PageRoute, params: string[]) => {
+  const path = `/${_.map(params, (p) => `${p}/`).join("")}`;
+
+  if (route === PageRoute.Home) {
+    return route;
+  }
+
+  return `/${route}${params ? path : ""}`;
+};
 
 export enum PageRoute {
+  Home = "/",
   Sources = "sources",
   Kustomizations = "kustomizations",
   HelmReleases = "helmreleases",
