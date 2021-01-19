@@ -257,12 +257,13 @@ func checkKustomizationSync(ctx context.Context, c client.Client, name types.Nam
 		if err != nil {
 			return false, err
 		}
+
 		return kustomization.Status.LastHandledReconcileAt != lastReconcile, nil
 	}
 }
 
 func (s *Server) SyncKustomization(ctx context.Context, msg *pb.SyncKustomizationReq) (*pb.SyncKustomizationRes, error) {
-	client, err := s.getClient(msg.ContextName)
+	c, err := s.getClient(msg.ContextName)
 
 	name := types.NamespacedName{
 		Name:      msg.KustomizationName,
@@ -270,16 +271,16 @@ func (s *Server) SyncKustomization(ctx context.Context, msg *pb.SyncKustomizatio
 	}
 	kustomization := kustomizev1.Kustomization{}
 
-	if err := client.Get(ctx, name, &kustomization); err != nil {
+	if err := c.Get(ctx, name, &kustomization); err != nil {
 		return nil, fmt.Errorf("could not list kustomizations: %w", err)
 	}
 
 	if msg.WithSource {
 		switch kustomization.Spec.SourceRef.Kind {
 		case sourcev1.GitRepositoryKind:
-			err = reconcileSource(ctx, client, kustomization.Spec, &sourcev1.GitRepository{})
+			err = reconcileSource(ctx, c, kustomization.Spec, &sourcev1.GitRepository{})
 		case sourcev1.BucketKind:
-			err = reconcileSource(ctx, client, kustomization.Spec, &sourcev1.Bucket{})
+			err = reconcileSource(ctx, c, kustomization.Spec, &sourcev1.Bucket{})
 		}
 		if err != nil {
 			return nil, fmt.Errorf("could not reconcile source: %w", err)
@@ -294,14 +295,14 @@ func (s *Server) SyncKustomization(ctx context.Context, msg *pb.SyncKustomizatio
 		kustomization.Annotations[meta.ReconcileAtAnnotation] = time.Now().Format(time.RFC3339Nano)
 	}
 
-	if err := client.Update(ctx, &kustomization); err != nil {
+	if err := c.Update(ctx, &kustomization); err != nil {
 		return nil, fmt.Errorf("could not update kustomization: %w", err)
 	}
 
 	if err := wait.PollImmediate(
 		k8sPollInterval,
 		k8sTimeout,
-		checkKustomizationSync(ctx, client, name, kustomization.Status.LastHandledReconcileAt),
+		checkKustomizationSync(ctx, c, name, kustomization.Status.LastHandledReconcileAt),
 	); err != nil {
 		return nil, err
 	}

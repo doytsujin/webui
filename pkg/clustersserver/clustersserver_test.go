@@ -80,5 +80,33 @@ var _ = Describe("clustersserver", func() {
 		Expect(len(res.HelmReleases)).To(Equal(1))
 
 	})
+	It("SyncKustomization", func() {
+		name := "some-kustomization"
+		ks := &kustomizev1.Kustomization{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      name,
+				Namespace: "default",
+			},
+			Spec: kustomizev1.KustomizationSpec{
+				SourceRef: kustomizev1.CrossNamespaceSourceReference{
+					Kind: "GitRepository",
+				},
+			},
+		}
+
+		err = testclient.Create(context.Background(), ks)
+
+		Expect(err).NotTo(HaveOccurred())
+
+		res, err := c.SyncKustomization(context.Background(), &pb.SyncKustomizationReq{
+			KustomizationName: name,
+			Namespace:         "default",
+			WithSource:        false,
+		})
+
+		Expect(err).NotTo(HaveOccurred())
+
+		Expect(res.Ok).To(BeTrue())
+	})
 
 })
