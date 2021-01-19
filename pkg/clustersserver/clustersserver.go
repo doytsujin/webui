@@ -108,6 +108,25 @@ func namespaceOpts(ns string) *client.ListOptions {
 	return &opts
 }
 
+func convertTimestamp(stamp string) (int64, error) {
+	parsed, err := time.Parse(time.RFC3339Nano, stamp)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return parsed.Unix(), nil
+}
+
+func getSourceTypeEnum(kind string) pb.Source_Type {
+	switch kind {
+	case sourcev1.GitRepositoryKind:
+		return pb.Source_Git
+	}
+
+	return pb.Source_Git
+}
+
 func (s *Server) ListKustomizations(ctx context.Context, msg *pb.ListKustomizationsReq) (*pb.ListKustomizationsRes, error) {
 	c, err := s.getClient(msg.ContextName)
 
@@ -123,14 +142,32 @@ func (s *Server) ListKustomizations(ctx context.Context, msg *pb.ListKustomizati
 
 	k := []*pb.Kustomization{}
 	for _, kustomization := range result.Items {
+		reconcileRequestAt, err := convertTimestamp(kustomization.Annotations[meta.ReconcileRequestAnnotation])
+
+		if err != nil {
+			return nil, fmt.Errorf("could not parse request timestamp: %w", err)
+		}
+
+		reconcileAt, err := convertTimestamp(kustomization.Annotations[meta.ReconcileAtAnnotation])
+
+		if err != nil {
+			return nil, fmt.Errorf("could not parse reconcile timestamp: %w", err)
+		}
+
+		fmt.Println(kustomization.Spec.SourceRef.Kind)
 
 		m := pb.Kustomization{
-			Name:            kustomization.Name,
-			Namespace:       kustomization.Namespace,
-			TargetNamespace: kustomization.Spec.TargetNamespace,
-			Path:            kustomization.Spec.Path,
-			SourceRef:       kustomization.Spec.SourceRef.Name,
-			Conditions:      []*pb.Condition{},
+			Name:               kustomization.Name,
+			Namespace:          kustomization.Namespace,
+			TargetNamespace:    kustomization.Spec.TargetNamespace,
+			Path:               kustomization.Spec.Path,
+			SourceRef:          kustomization.Spec.SourceRef.Name,
+			SourceRefKind:      getSourceTypeEnum(kustomization.Spec.SourceRef.Kind),
+			Conditions:         []*pb.Condition{},
+			Interval:           kustomization.Spec.Interval.Duration.String(),
+			Prune:              kustomization.Spec.Prune,
+			ReconcileRequestAt: int32(reconcileRequestAt),
+			ReconcileAt:        int32(reconcileAt),
 		}
 
 		for _, c := range kustomization.Status.Conditions {

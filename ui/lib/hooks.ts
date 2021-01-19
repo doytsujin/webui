@@ -61,10 +61,6 @@ export function useKubernetesContexts(): {
 
       nextNamespaces.unshift(AllNamespacesOption);
 
-      // setCurrentNamespace(
-      //   pathNamespace === "all" ? nextNamespaces[0] : pathNamespace
-      // );
-
       setNamespaces({
         ...namespaces,
         ...{
@@ -103,6 +99,7 @@ export function useKustomizations(
       })
       .then((res) => {
         const r = _.keyBy(res.kustomizations, "name");
+        console.log(r);
         setKustomizations(r);
       })
       .catch((e) => console.error(e));

@@ -5,9 +5,19 @@ import { useParams } from "react-router";
 import styled from "styled-components";
 import Link from "../components/Link";
 import { useKubernetesContexts, useKustomizations } from "../lib/hooks";
-import { Button, CircularProgress } from "@material-ui/core";
+import {
+  Button,
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@material-ui/core";
 import { DefaultClusters } from "../lib/rpc/clusters";
-import { wrappedFetch } from "../lib/util";
+import { PageRoute, toRoute, wrappedFetch } from "../lib/util";
+import Flex from "../components/Flex";
 
 type Props = {
   className?: string;
@@ -47,31 +57,68 @@ function KustomizationDetail({ className }: Props) {
   return (
     <div className={className}>
       <h2>{kustomizationDetail.name}</h2>
+      <Flex wide>
+        <div>
+          <Button
+            onClick={handleSyncClicked}
+            color="primary"
+            disabled={syncing}
+            variant="contained"
+          >
+            {syncing ? <CircularProgress size={24} /> : "Sync"}
+          </Button>
+        </div>
+        <div></div>
+      </Flex>
+      <h3>Info</h3>
       <p>
         Source:{" "}
-        <Link to={`/sources/${kustomizationDetail.sourceref}`}>
+        <Link
+          route={PageRoute.Sources}
+          params={[
+            _.toLower(kustomizationDetail.sourcerefkind),
+            kustomizationDetail.sourceref,
+          ]}
+        >
           {kustomizationDetail.sourceref}
         </Link>
       </p>
+      <p>Interval: {kustomizationDetail.interval}</p>
+      <p>Path: {kustomizationDetail.path}</p>
+      <p>Namespace: {kustomizationDetail.namespace}</p>
+      <p>
+        Last reconciled at:{" "}
+        {new Date(kustomizationDetail.reconcileat).toDateString()}{" "}
+      </p>
+      <p>
+        Last reconcile request at:{" "}
+        {new Date(kustomizationDetail.reconcilerequestat).toDateString()}{" "}
+      </p>
+
       <div>
-        <Button
-          onClick={handleSyncClicked}
-          color="primary"
-          disabled={syncing}
-          variant="contained"
-        >
-          {syncing ? <CircularProgress size={24} /> : "Sync"}
-        </Button>
-      </div>
-      <div>
-        Conditions:{" "}
-        <ul>
-          {_.map(kustomizationDetail.conditions, (c) => (
-            <li key={c.type}>
-              {c.type}: {c.status}
-            </li>
-          ))}
-        </ul>
+        <h3>Conditions</h3>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Type</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Reason</TableCell>
+                <TableCell>Message</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {_.map(kustomizationDetail.conditions, (c) => (
+                <TableRow>
+                  <TableCell>{c.type}</TableCell>
+                  <TableCell>{c.status}</TableCell>
+                  <TableCell>{c.reason}</TableCell>
+                  <TableCell>{c.message}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </div>
     </div>
   );

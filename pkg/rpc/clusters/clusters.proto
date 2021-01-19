@@ -47,6 +47,11 @@ message Kustomization {
     string path = 4;
     string sourceRef = 5;
     repeated Condition conditions = 6;
+    string interval = 7;
+    bool prune = 8;
+    int32 reconcileRequestAt = 9;
+    int32 reconcileAt = 10;
+    Source.Type sourceRefKind = 11;
 }
 
 message ListKustomizationsReq {

@@ -130,6 +130,11 @@ export interface Kustomization {
     path: string;
     sourceref: string;
     conditions: Condition[];
+    interval: string;
+    prune: boolean;
+    reconcilerequestat: number;
+    reconcileat: number;
+    sourcerefkind: string;
     
 }
 
@@ -140,6 +145,11 @@ interface KustomizationJSON {
     path: string;
     sourceRef: string;
     conditions: ConditionJSON[];
+    interval: string;
+    prune: boolean;
+    reconcileRequestAt: number;
+    reconcileAt: number;
+    sourceRefKind: string;
     
 }
 
@@ -153,6 +163,11 @@ const JSONToKustomization = (m: Kustomization | KustomizationJSON): Kustomizatio
         path: m.path,
         sourceref: (((m as Kustomization).sourceref) ? (m as Kustomization).sourceref : (m as KustomizationJSON).sourceRef),
         conditions: (m.conditions as (Condition | ConditionJSON)[]).map(JSONToCondition),
+        interval: m.interval,
+        prune: m.prune,
+        reconcilerequestat: (((m as Kustomization).reconcilerequestat) ? (m as Kustomization).reconcilerequestat : (m as KustomizationJSON).reconcileRequestAt),
+        reconcileat: (((m as Kustomization).reconcileat) ? (m as Kustomization).reconcileat : (m as KustomizationJSON).reconcileAt),
+        sourcerefkind: (((m as Kustomization).sourcerefkind) ? (m as Kustomization).sourcerefkind : (m as KustomizationJSON).sourceRefKind),
         
     };
 };

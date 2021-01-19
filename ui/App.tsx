@@ -26,11 +26,13 @@ const AppContainer = styled.div`
 `;
 
 const NavContainer = styled.div`
-  min-width: 200px;
+  width: 240px;
 `;
 
 const ContentCotainer = styled.div`
   width: 100%;
+  max-width: 1024px;
+  margin: 0 auto;
 `;
 
 export default function App() {
