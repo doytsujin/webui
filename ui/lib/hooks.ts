@@ -99,7 +99,6 @@ export function useKustomizations(
       })
       .then((res) => {
         const r = _.keyBy(res.kustomizations, "name");
-        console.log(r);
         setKustomizations(r);
       })
       .catch((e) => console.error(e));
@@ -145,8 +144,8 @@ export function useSources(
   return sources[sourceType];
 }
 
-export function useHelmReleases(): HelmRelease[] {
-  const [helmReleases, setHelmReleases] = useState([]);
+export function useHelmReleases(): { [name: string]: HelmRelease } {
+  const [helmReleases, setHelmReleases] = useState({});
 
   const { currentContext } = useKubernetesContexts();
 
@@ -161,7 +160,8 @@ export function useHelmReleases(): HelmRelease[] {
         namespace: "default",
       })
       .then((res) => {
-        setHelmReleases(res.helmReleases);
+        const releases = _.keyBy(res.helmReleases, "name");
+        setHelmReleases(releases);
       })
       .catch((e) => console.error(e));
   }, [currentContext]);

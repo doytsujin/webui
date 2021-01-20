@@ -376,7 +376,19 @@ func (s *Server) ListHelmReleases(ctx context.Context, msg *pb.ListHelmReleasesR
 	}
 
 	for _, r := range list.Items {
-		res.HelmReleases = append(res.HelmReleases, &pb.HelmRelease{Name: r.Name})
+		spec := r.Spec
+		chartSpec := r.Spec.Chart.Spec
+
+		res.HelmReleases = append(res.HelmReleases, &pb.HelmRelease{
+			Name:            r.Name,
+			Namespace:       r.Namespace,
+			Interval:        spec.Interval.Duration.String(),
+			ChartName:       chartSpec.Chart,
+			Version:         chartSpec.Version,
+			SourceKind:      chartSpec.SourceRef.Kind,
+			SourceName:      chartSpec.SourceRef.Name,
+			SourceNamespace: chartSpec.SourceRef.Namespace,
+		})
 	}
 
 	return res, nil

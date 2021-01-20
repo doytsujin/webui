@@ -124,6 +124,12 @@ message SyncKustomizationRes {
 message HelmRelease {
     string name = 1;
     string namespace = 2;
+    string interval = 3;
+    string chartName = 5;
+    string version = 6;
+    string sourceKind = 7;
+    string sourceName  = 8;
+    string sourceNamespace = 9;
 }
 
 message ListHelmReleasesReq {

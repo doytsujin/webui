@@ -418,12 +418,24 @@ const JSONToSyncKustomizationRes = (m: SyncKustomizationRes | SyncKustomizationR
 export interface HelmRelease {
     name: string;
     namespace: string;
+    interval: string;
+    chartname: string;
+    version: string;
+    sourcekind: string;
+    sourcename: string;
+    sourcenamespace: string;
     
 }
 
 interface HelmReleaseJSON {
     name: string;
     namespace: string;
+    interval: string;
+    chartName: string;
+    version: string;
+    sourceKind: string;
+    sourceName: string;
+    sourceNamespace: string;
     
 }
 
@@ -433,6 +445,12 @@ const JSONToHelmRelease = (m: HelmRelease | HelmReleaseJSON): HelmRelease => {
     return {
         name: m.name,
         namespace: m.namespace,
+        interval: m.interval,
+        chartname: (((m as HelmRelease).chartname) ? (m as HelmRelease).chartname : (m as HelmReleaseJSON).chartName),
+        version: m.version,
+        sourcekind: (((m as HelmRelease).sourcekind) ? (m as HelmRelease).sourcekind : (m as HelmReleaseJSON).sourceKind),
+        sourcename: (((m as HelmRelease).sourcename) ? (m as HelmRelease).sourcename : (m as HelmReleaseJSON).sourceName),
+        sourcenamespace: (((m as HelmRelease).sourcenamespace) ? (m as HelmRelease).sourcenamespace : (m as HelmReleaseJSON).sourceNamespace),
         
     };
 };
