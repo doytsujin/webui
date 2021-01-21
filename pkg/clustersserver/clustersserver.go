@@ -310,6 +310,10 @@ func checkKustomizationSync(ctx context.Context, c client.Client, name types.Nam
 func (s *Server) SyncKustomization(ctx context.Context, msg *pb.SyncKustomizationReq) (*pb.SyncKustomizationRes, error) {
 	client, err := s.getClient(msg.ContextName)
 
+	if err != nil {
+		return nil, fmt.Errorf("could not create client: %w", err)
+	}
+
 	name := types.NamespacedName{
 		Name:      msg.KustomizationName,
 		Namespace: msg.Namespace,
