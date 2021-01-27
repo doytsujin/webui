@@ -9,11 +9,13 @@ import AppStateProvider from "./components/AppStateProvider";
 import LeftNav from "./components/LeftNav";
 import theme, { GlobalStyle } from "./lib/theme";
 import { PageRoute, prefixRoute } from "./lib/util";
+import Callback from "./pages/Callback";
 import HelmReleaseDetail from "./pages/HelmReleaseDetail";
 import HelmReleases from "./pages/HelmReleases";
 import KustomizationDetail from "./pages/KustomizationDetail";
 import Kustomizations from "./pages/Kustomizations";
 import Redirector from "./pages/Redirector";
+import Setup from "./pages/Setup";
 import SourceDetail from "./pages/SourceDetail";
 import Sources from "./pages/Sources";
 
@@ -50,6 +52,8 @@ export default function App() {
               </NavContainer>
               <ContentCotainer>
                 <Switch>
+                  <Route exact path="/setup" component={Setup} />
+                  <Route exact path="/github/callback" component={Callback} />
                   <Route exact path="/" component={Redirector} />
                   <Route exact path="/:context" component={Redirector} />
                   <Route
@@ -95,6 +99,7 @@ export default function App() {
                     path={prefixRoute(PageRoute.HelmReleases, "helmReleaseId")}
                     component={HelmReleaseDetail}
                   />
+
                   <Route exact path="*" component={() => <p>404</p>} />
                 </Switch>
               </ContentCotainer>

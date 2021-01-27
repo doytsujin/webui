@@ -13,12 +13,32 @@ function isHTTP(uri) {
   return uri.includes("http") || uri.includes("https");
 }
 
+function getRepoDetailsFromGitUrl(uri: string) {
+  const [, provider, org, repo] = uri.match(/git@(.*)\/(.*)\/(.*)/);
+
+  return { provider, org, repo };
+}
+
+function getRepoDetailsFromHTTPUrl(uri: string) {
+  const [, provider, org, repo] = uri.match(/https:\/\/(.*)\/(.*)\/(.*)/);
+
+  return { provider, org, repo };
+}
+
+function getRepoDetails(uri: string) {
+  if (isHTTP(uri)) {
+    return getRepoDetailsFromHTTPUrl(uri);
+  }
+
+  return getRepoDetailsFromGitUrl(uri);
+}
+
 function convertRefURLToGitProvider(uri: string) {
   if (isHTTP(uri)) {
     return uri;
   }
 
-  const [, provider, org, repo] = uri.match(/git@(.*)\/(.*)\/(.*)/);
+  const { provider, org, repo } = getRepoDetailsFromGitUrl(uri);
 
   return `https://${provider}/${org}/${repo}`;
 }
@@ -30,18 +50,37 @@ function SourceDetail({ className }: Props) {
     sourceType: SourceType;
     sourceId: string;
   }>();
-  const { currentContext, currentNamespace } = useKubernetesContexts();
+  const { currentContext, currentNamespace } = useKubernetesContexts("");
   const sources = useSources(currentContext, currentNamespace, sourceType);
+  const [buildInfo, setBuildInfo] = React.useState(null);
 
   const sourceDetail = _.find(sources, { name: sourceId });
+
+  React.useEffect(() => {
+    if (!sourceDetail) {
+      return;
+    }
+
+    const token = localStorage.getItem("ghAccessToken");
+    const { org, repo } = getRepoDetails(sourceDetail.url);
+
+    const body = JSON.stringify({ owner: org, repo, token });
+
+    console.log(body);
+
+    fetch("/api/github/builds", {
+      method: "POST",
+      body,
+    })
+      .then((res) => res.json())
+      .then((r) => console.log(r));
+  }, [sourceDetail]);
 
   if (!sourceDetail) {
     return null;
   }
 
   const providerUrl = convertRefURLToGitProvider(sourceDetail.url);
-
-  console.log(sourceDetail);
 
   return (
     <div className={className}>

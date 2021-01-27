@@ -35,4 +35,5 @@ export enum PageRoute {
   Sources = "sources",
   Kustomizations = "kustomizations",
   HelmReleases = "helmreleases",
+  Setup = "setup",
 }

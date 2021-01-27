@@ -49,6 +49,10 @@ const Styled = (cmp) => styled(cmp)`
 `;
 
 function LeftNav({ className }: Props) {
+  const location = useLocation();
+  const history = useHistory();
+  const [, , pageName] = normalizePath(location.pathname);
+
   const {
     contexts,
     namespaces,
@@ -56,11 +60,7 @@ function LeftNav({ className }: Props) {
     currentNamespace,
     setCurrentContext,
     setCurrentNamespace,
-  } = useKubernetesContexts();
-
-  const location = useLocation();
-  const history = useHistory();
-  const [, , pageName] = normalizePath(location.pathname);
+  } = useKubernetesContexts(pageName);
 
   return (
     <div className={className}>
@@ -135,6 +135,13 @@ function LeftNav({ className }: Props) {
               route={n.value}
             />
           ))}
+
+          <LinkTab
+            raw="/setup"
+            key="setup"
+            label="Setup"
+            value="setup"
+          ></LinkTab>
         </Tabs>
       </div>
     </div>

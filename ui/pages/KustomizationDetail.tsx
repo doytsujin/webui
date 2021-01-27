@@ -108,8 +108,8 @@ function KustomizationDetail({ className }: Props) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {_.map(kustomizationDetail.conditions, (c) => (
-                <TableRow>
+              {_.map(kustomizationDetail.conditions, (c, i) => (
+                <TableRow key={i}>
                   <TableCell>{c.type}</TableCell>
                   <TableCell>{c.status}</TableCell>
                   <TableCell>{c.reason}</TableCell>

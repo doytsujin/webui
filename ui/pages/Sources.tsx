@@ -22,7 +22,7 @@ const TabPanel = ({ value, children, index }) => (
 );
 
 function Sources({ className }: Props) {
-  const { currentContext, currentNamespace } = useKubernetesContexts();
+  const { currentContext, currentNamespace } = useKubernetesContexts("");
   const [selectedTab, setTab] = React.useState(SourceType.Git);
   const sources = useSources(currentContext, currentNamespace, selectedTab);
 

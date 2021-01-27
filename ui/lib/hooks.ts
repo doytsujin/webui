@@ -10,14 +10,16 @@ import {
   Source,
 } from "./rpc/clusters";
 import { AllNamespacesOption, NamespaceLabel } from "./types";
-import { normalizePath, wrappedFetch } from "./util";
+import { normalizePath, PageRoute, wrappedFetch } from "./util";
 
 const clusters = new DefaultClusters("/api/clusters", wrappedFetch);
 
 export const getNamespaces = async (contextname: string) =>
   clusters.listNamespacesForContext({ contextname });
 
-export function useKubernetesContexts(): {
+export function useKubernetesContexts(
+  pageName
+): {
   contexts: Context[];
   namespaces: string[];
   currentContext: string;
@@ -40,6 +42,9 @@ export function useKubernetesContexts(): {
   const [pathContext, pathNamespace] = normalizePath(location.pathname);
 
   useEffect(() => {
+    if (pageName === PageRoute.Setup) {
+      return;
+    }
     // Runs once on app startup.
     (async () => {
       const res = await clusters.listContexts({});
@@ -144,10 +149,12 @@ export function useSources(
   return sources[sourceType];
 }
 
-export function useHelmReleases(): { [name: string]: HelmRelease } {
+export function useHelmReleases(
+  pageName: string
+): { [name: string]: HelmRelease } {
   const [helmReleases, setHelmReleases] = useState({});
 
-  const { currentContext } = useKubernetesContexts();
+  const { currentContext } = useKubernetesContexts(pageName);
 
   useEffect(() => {
     if (!currentContext) {
