@@ -41,8 +41,6 @@ function SourceDetail({ className }: Props) {
 
   const providerUrl = convertRefURLToGitProvider(sourceDetail.url);
 
-  console.log(sourceDetail);
-
   return (
     <div className={className}>
       <h2>{sourceDetail.name}</h2>

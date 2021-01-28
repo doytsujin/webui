@@ -154,8 +154,6 @@ func (s *Server) ListKustomizations(ctx context.Context, msg *pb.ListKustomizati
 			return nil, fmt.Errorf("could not parse reconcile timestamp: %w", err)
 		}
 
-		fmt.Println(kustomization.Spec.SourceRef.Kind)
-
 		m := pb.Kustomization{
 			Name:               kustomization.Name,
 			Namespace:          kustomization.Namespace,
