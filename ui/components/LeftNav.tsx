@@ -65,63 +65,6 @@ function LeftNav({ className }: Props) {
   return (
     <div className={className}>
       <div>
-        <Link route={PageRoute.Home}>
-          <Logo />
-        </Link>
-      </div>
-
-      <div>
-        <FormControl>
-          <InputLabel id="context-selector">Context</InputLabel>
-          <Select
-            onChange={(ev) => {
-              const nextCtx = ev.target.value;
-              setCurrentContext(nextCtx as string);
-              history.replace(
-                `/${nextCtx}/${currentNamespace || "all"}/${pageName}`
-              );
-            }}
-            value={currentContext}
-            id="context-selector"
-            label="Contexts"
-          >
-            {_.map(contexts, (c) => (
-              <MenuItem value={c.name || ""} key={c.name}>
-                {c.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-        <FormControl>
-          <InputLabel id="namespaces-selector">Namespace</InputLabel>
-          {namespaces.length > 0 && (
-            <Select
-              onChange={(ev) => {
-                const nextNs =
-                  ev.target.value === allNamespaces ? "" : ev.target.value;
-                setCurrentNamespace(nextNs as string);
-                history.replace(
-                  `/${currentContext}/${nextNs || "all"}/${pageName}`
-                );
-              }}
-              // Avoid a material-ui warning
-              value={currentNamespace || allNamespaces}
-              id="namespaces-selector"
-              label="Namespace"
-            >
-              {_.map(namespaces, (ns) => {
-                const label = ns === "" ? allNamespaces : ns;
-                return (
-                  <MenuItem value={label} key={label}>
-                    {label}
-                  </MenuItem>
-                );
-              })}
-            </Select>
-          )}
-        </FormControl>
-      </div>
-      <div>
         <Tabs
           centered={false}
           orientation="vertical"

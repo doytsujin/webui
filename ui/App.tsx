@@ -6,7 +6,9 @@ import * as React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import styled, { ThemeProvider } from "styled-components";
 import AppStateProvider from "./components/AppStateProvider";
+import Flex from "./components/Flex";
 import LeftNav from "./components/LeftNav";
+import TopNav from "./components/TopNav";
 import theme, { GlobalStyle } from "./lib/theme";
 import { PageRoute, prefixRoute } from "./lib/util";
 import HelmReleaseDetail from "./pages/HelmReleaseDetail";
@@ -18,7 +20,7 @@ import SourceDetail from "./pages/SourceDetail";
 import Sources from "./pages/Sources";
 
 const AppContainer = styled.div`
-  display: flex;
+  /* display: flex; */
   width: 100%;
   height: 100%;
   margin: 0 auto;
@@ -43,61 +45,71 @@ export default function App() {
           <GlobalStyle />
           <Router>
             <AppContainer>
-              <NavContainer>
-                <Container>
-                  <LeftNav />
-                </Container>
-              </NavContainer>
-              <ContentCotainer>
-                <Switch>
-                  <Route exact path="/" component={Redirector} />
-                  <Route exact path="/:context" component={Redirector} />
-                  <Route
-                    exact
-                    path="/:context/:namespace"
-                    component={Redirector}
-                  />
-                  <Route
-                    exact
-                    path={prefixRoute(PageRoute.Kustomizations)}
-                    component={Kustomizations}
-                  />
-                  <Route
-                    exact
-                    path={prefixRoute(
-                      PageRoute.Kustomizations,
-                      "kustomizationId"
-                    )}
-                    // path="/:context/kustomizations/:kustomizationId"
-                    component={KustomizationDetail}
-                  />
-                  <Route
-                    exact
-                    path={prefixRoute(PageRoute.Sources)}
-                    component={Sources}
-                  />
-                  <Route
-                    exact
-                    path={prefixRoute(
-                      PageRoute.Sources,
-                      "sourceType",
-                      "sourceId"
-                    )}
-                    component={SourceDetail}
-                  />
-                  <Route
-                    exact
-                    path={prefixRoute(PageRoute.HelmReleases)}
-                    component={HelmReleases}
-                  />
-                  <Route
-                    exact
-                    path={prefixRoute(PageRoute.HelmReleases, "helmReleaseId")}
-                    component={HelmReleaseDetail}
-                  />
-                  <Route exact path="*" component={() => <p>404</p>} />
-                </Switch>
-              </ContentCotainer>
+              <div style={{ width: "100%" }}>
+                <TopNav />
+              </div>
+              <div>
+                <Flex>
+                  <NavContainer>
+                    <Container>
+                      <LeftNav />
+                    </Container>
+                  </NavContainer>
+                  <ContentCotainer>
+                    <Switch>
+                      <Route exact path="/" component={Redirector} />
+                      <Route exact path="/:context" component={Redirector} />
+                      <Route
+                        exact
+                        path="/:context/:namespace"
+                        component={Redirector}
+                      />
+                      <Route
+                        exact
+                        path={prefixRoute(PageRoute.Kustomizations)}
+                        component={Kustomizations}
+                      />
+                      <Route
+                        exact
+                        path={prefixRoute(
+                          PageRoute.Kustomizations,
+                          "kustomizationId"
+                        )}
+                        // path="/:context/kustomizations/:kustomizationId"
+                        component={KustomizationDetail}
+                      />
+                      <Route
+                        exact
+                        path={prefixRoute(PageRoute.Sources)}
+                        component={Sources}
+                      />
+                      <Route
+                        exact
+                        path={prefixRoute(
+                          PageRoute.Sources,
+                          "sourceType",
+                          "sourceId"
+                        )}
+                        component={SourceDetail}
+                      />
+                      <Route
+                        exact
+                        path={prefixRoute(PageRoute.HelmReleases)}
+                        component={HelmReleases}
+                      />
+                      <Route
+                        exact
+                        path={prefixRoute(
+                          PageRoute.HelmReleases,
+                          "helmReleaseId"
+                        )}
+                        component={HelmReleaseDetail}
+                      />
+                      <Route exact path="*" component={() => <p>404</p>} />
+                    </Switch>
+                  </ContentCotainer>
+                </Flex>
+              </div>
             </AppContainer>
           </Router>
         </AppStateProvider>
