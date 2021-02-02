@@ -16,8 +16,10 @@ type Props = {
 };
 
 const NavWrapper = styled(Flex)`
-  padding: 16px;
+  height: 60px;
+  align-items: flex-end;
 `;
+
 const Styled = (c) => styled(c)`
   /* height: 48px; */
   background-color: #3570e3;
@@ -45,7 +47,10 @@ const Styled = (c) => styled(c)`
   }
 
   fieldset {
-    border-color: #ffffff;
+    &,
+    &:hover {
+      border-color: #ffffff !important;
+    }
   }
 
   svg {
@@ -70,13 +75,13 @@ function TopNav({ className }: Props) {
   return (
     <header className={className}>
       <Flex>
-        <div>
+        <div style={{ marginLeft: 8 }}>
           <Link route={PageRoute.Home}>
             <Logo />
           </Link>
         </div>
-        <NavWrapper column center>
-          <div>
+        <NavWrapper column center wide>
+          <Flex center>
             <FormControl variant="outlined">
               <InputLabel id="context-selector">Context</InputLabel>
               <Select
@@ -126,7 +131,7 @@ function TopNav({ className }: Props) {
                 </Select>
               )}
             </FormControl>
-          </div>
+          </Flex>
         </NavWrapper>
       </Flex>
     </header>

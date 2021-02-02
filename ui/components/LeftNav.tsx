@@ -46,20 +46,14 @@ const Styled = (cmp) => styled(cmp)`
   #context-selector {
     min-width: 120px;
   }
+
+  background-color: #f5f5f5;
+  height: 100vh;
+  padding-left: 8px;
 `;
 
 function LeftNav({ className }: Props) {
-  const {
-    contexts,
-    namespaces,
-    currentContext,
-    currentNamespace,
-    setCurrentContext,
-    setCurrentNamespace,
-  } = useKubernetesContexts();
-
   const location = useLocation();
-  const history = useHistory();
   const [, , pageName] = normalizePath(location.pathname);
 
   return (
@@ -67,6 +61,9 @@ function LeftNav({ className }: Props) {
       <div>
         <Tabs
           centered={false}
+          // typescript explodes on this prop, but MUI says its supported
+          // @ts-ignore
+          // TabIndicatorProps={{ orientation: "horizontal" }}
           orientation="vertical"
           value={pageName || navItems[0].value}
         >

@@ -51,9 +51,7 @@ export default function App() {
               <div>
                 <Flex>
                   <NavContainer>
-                    <Container>
-                      <LeftNav />
-                    </Container>
+                    <LeftNav />
                   </NavContainer>
                   <ContentCotainer>
                     <Switch>
