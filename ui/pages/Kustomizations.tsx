@@ -1,5 +1,4 @@
 import {
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -55,7 +54,7 @@ function Kustomizations({ className }: Props) {
   return (
     <div className={className}>
       <h2>Kustomizations</h2>
-      <TableContainer component={Paper}>
+      <TableContainer>
         <Table aria-label="simple table">
           <TableHead>
             <TableRow>
