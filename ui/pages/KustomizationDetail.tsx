@@ -1,13 +1,8 @@
-import * as React from "react";
-import _ from "lodash";
-
-import { useParams } from "react-router";
-import styled from "styled-components";
-import Link from "../components/Link";
-import { useKubernetesContexts, useKustomizations } from "../lib/hooks";
 import {
+  Box,
   Button,
   CircularProgress,
+  Container,
   Table,
   TableBody,
   TableCell,
@@ -15,15 +10,40 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
-import { DefaultClusters } from "../lib/rpc/clusters";
-import { PageRoute, toRoute, wrappedFetch } from "../lib/util";
+import _ from "lodash";
+import * as React from "react";
+import { useParams } from "react-router";
+import styled from "styled-components";
 import Flex from "../components/Flex";
+import KeyValueTable from "../components/KeyValueTable";
+import Link from "../components/Link";
+import Panel from "../components/Panel";
+import { useKubernetesContexts, useKustomizations } from "../lib/hooks";
+import { DefaultClusters, Kustomization } from "../lib/rpc/clusters";
+import { PageRoute, wrappedFetch } from "../lib/util";
 
 type Props = {
   className?: string;
 };
 
 const Styled = (c) => styled(c)``;
+
+const infoFields = ["sourceref", "namespace", "path", "interval", "prune"];
+
+const formatInfo = (detail: Kustomization) =>
+  _.map(_.pick(detail, infoFields), (v, k) => ({
+    key: k,
+    value: typeof v === "string" ? v : v.toString(),
+  }));
+
+const infoResolvers = {
+  sourceref: (v, k) => [
+    <Link route={PageRoute.Sources} params={[_.toLower(v.sourcerefkind), v]}>
+      {v}
+    </Link>,
+    "Source",
+  ],
+};
 
 function KustomizationDetail({ className }: Props) {
   const [syncing, setSyncing] = React.useState(false);
@@ -56,9 +76,11 @@ function KustomizationDetail({ className }: Props) {
 
   return (
     <div className={className}>
-      <h2>{kustomizationDetail.name}</h2>
-      <Flex wide>
-        <div>
+      <Box m={2}>
+        <Flex align center wide>
+          <Flex wide>
+            <h2>{kustomizationDetail.name}</h2>
+          </Flex>
           <Button
             onClick={handleSyncClicked}
             color="primary"
@@ -67,59 +89,42 @@ function KustomizationDetail({ className }: Props) {
           >
             {syncing ? <CircularProgress size={24} /> : "Sync"}
           </Button>
-        </div>
-        <div></div>
-      </Flex>
-      <h3>Info</h3>
-      <p>
-        Source:{" "}
-        <Link
-          route={PageRoute.Sources}
-          params={[
-            _.toLower(kustomizationDetail.sourcerefkind),
-            kustomizationDetail.sourceref,
-          ]}
-        >
-          {kustomizationDetail.sourceref}
-        </Link>
-      </p>
-      <p>Interval: {kustomizationDetail.interval}</p>
-      <p>Path: {kustomizationDetail.path}</p>
-      <p>Namespace: {kustomizationDetail.namespace}</p>
-      <p>
-        Last reconciled at:{" "}
-        {new Date(kustomizationDetail.reconcileat).toDateString()}{" "}
-      </p>
-      <p>
-        Last reconcile request at:{" "}
-        {new Date(kustomizationDetail.reconcilerequestat).toDateString()}{" "}
-      </p>
+        </Flex>
+        <Panel title="Info">
+          <KeyValueTable
+            columns={3}
+            pairs={formatInfo(kustomizationDetail)}
+            resolvers={infoResolvers}
+          />
+        </Panel>
+      </Box>
 
-      <div>
-        <h3>Conditions</h3>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Type</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Reason</TableCell>
-                <TableCell>Message</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {_.map(kustomizationDetail.conditions, (c) => (
+      <Box m={2}>
+        <Panel title="Conditions">
+          <TableContainer>
+            <Table>
+              <TableHead>
                 <TableRow>
-                  <TableCell>{c.type}</TableCell>
-                  <TableCell>{c.status}</TableCell>
-                  <TableCell>{c.reason}</TableCell>
-                  <TableCell>{c.message}</TableCell>
+                  <TableCell>Type</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Reason</TableCell>
+                  <TableCell>Message</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
+              </TableHead>
+              <TableBody>
+                {_.map(kustomizationDetail.conditions, (c) => (
+                  <TableRow>
+                    <TableCell>{c.type}</TableCell>
+                    <TableCell>{c.status}</TableCell>
+                    <TableCell>{c.reason}</TableCell>
+                    <TableCell>{c.message}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Panel>
+      </Box>
     </div>
   );
 }
