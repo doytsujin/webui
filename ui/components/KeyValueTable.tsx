@@ -7,11 +7,8 @@ type Props = {
   className?: string;
   pairs: { key: string; value: string }[];
   columns: number;
-  resolvers?: {
-    [keyName: string]: (
-      v: string,
-      k: string
-    ) => Array<React.ReactElement | string>;
+  overrides?: {
+    [keyName: string]: Array<React.ReactElement | string>;
   };
 };
 
@@ -34,7 +31,7 @@ const Row = styled(Flex)`
 
 const Styled = (c) => styled(c)``;
 
-function KeyValueTable({ className, pairs, columns, resolvers }: Props) {
+function KeyValueTable({ className, pairs, columns, overrides }: Props) {
   const arr = new Array(Math.ceil(pairs.length / columns))
     .fill(null)
     .map(() => pairs.splice(0, columns));
@@ -46,13 +43,11 @@ function KeyValueTable({ className, pairs, columns, resolvers }: Props) {
           {_.map(a, ({ key, value }) => {
             let k = key;
             let v = value;
-            const resolver = resolvers[key];
+            const override = overrides ? overrides[key] : null;
 
-            if (resolvers[key]) {
-              const [mv, mk] = resolver(value, key);
-
-              v = mv as string;
-              k = mk as string;
+            if (override) {
+              v = override[0] as string;
+              k = override[1] as string;
             }
 
             const label = _.capitalize(k);

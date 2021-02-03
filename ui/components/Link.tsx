@@ -9,19 +9,19 @@ type Props = {
   params?: string[];
   children: any;
   query?: object;
+  to?: string;
 };
 
 const Styled = (c) => styled(c)``;
 
-function Link({ className, route, children, params }: Props) {
+function Link({ className, route, children, params, to }: Props) {
   const location = useLocation();
   const [context, namespace] = normalizePath(location.pathname);
 
+  const href = to ? to : `/${context}/${namespace}${toRoute(route, params)}`;
+
   return (
-    <a
-      href={`/${context}/${namespace}${toRoute(route, params)}`}
-      className={className}
-    >
+    <a href={href} className={className}>
       {children}
     </a>
   );

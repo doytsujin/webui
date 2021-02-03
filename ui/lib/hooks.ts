@@ -113,11 +113,16 @@ export enum SourceType {
   Helm = "helm",
 }
 
+type SourceData = {
+  [SourceType.Git]: Source[];
+  [SourceType.Bucket]: Source[];
+  [SourceType.Helm]: Source[];
+};
+
 export function useSources(
   currentContext: string,
-  currentNamespace: string,
-  sourceType: SourceType
-): Source[] {
+  currentNamespace: string
+): SourceData {
   const [sources, setSources] = useState({
     [SourceType.Git]: [],
     [SourceType.Bucket]: [],
@@ -129,19 +134,42 @@ export function useSources(
       return;
     }
 
-    clusters
-      .listSources({
+    const p = _.map(SourceType, (s) =>
+      clusters.listSources({
         contextname: currentContext,
         namespace: currentNamespace,
-        sourcetype: sourceType,
+        sourcetype: s,
       })
-      .then((res) => {
-        setSources({ ...sources, ...{ [sourceType]: res.sources } });
-      })
-      .catch((e) => console.error(e));
-  }, [currentContext, currentNamespace, sourceType]);
+    );
 
-  return sources[sourceType];
+    Promise.all(p).then((arr) => {
+      const d = {};
+      _.each(arr, (a) => {
+        _.each(a.sources, (src) => {
+          const t = _.lowerCase(src.type);
+          if (!d[t]) {
+            d[t] = [];
+          }
+
+          d[t].push(src);
+        });
+      });
+      setSources(d as SourceData);
+    });
+
+    // clusters
+    //   .listSources({
+    //     contextname: currentContext,
+    //     namespace: currentNamespace,
+    //     sourcetype: sourceType,
+    //   })
+    //   .then((res) => {
+    //     setSources({ ...sources, ...{ [sourceType]: res.sources } });
+    //   })
+    //   .catch((e) => console.error(e));
+  }, [currentContext, currentNamespace]);
+
+  return sources;
 }
 
 export function useHelmReleases(): { [name: string]: HelmRelease } {

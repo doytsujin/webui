@@ -36,15 +36,6 @@ const formatInfo = (detail: Kustomization) =>
     value: typeof v === "string" ? v : v.toString(),
   }));
 
-const infoResolvers = {
-  sourceref: (v, k) => [
-    <Link route={PageRoute.Sources} params={[_.toLower(v.sourcerefkind), v]}>
-      {v}
-    </Link>,
-    "Source",
-  ],
-};
-
 function KustomizationDetail({ className }: Props) {
   const [syncing, setSyncing] = React.useState(false);
   const { kustomizationId } = useParams<{ kustomizationId: string }>();
@@ -74,6 +65,21 @@ function KustomizationDetail({ className }: Props) {
     return null;
   }
 
+  const overrides = {
+    sourceref: [
+      <Link
+        route={PageRoute.Sources}
+        params={[
+          kustomizationDetail.sourcerefkind.toLowerCase(),
+          kustomizationDetail.sourceref,
+        ]}
+      >
+        {kustomizationDetail.sourceref}
+      </Link>,
+      "Source",
+    ],
+  };
+
   return (
     <div className={className}>
       <Box m={2}>
@@ -94,7 +100,7 @@ function KustomizationDetail({ className }: Props) {
           <KeyValueTable
             columns={3}
             pairs={formatInfo(kustomizationDetail)}
-            resolvers={infoResolvers}
+            overrides={overrides}
           />
         </Panel>
       </Box>
@@ -113,7 +119,7 @@ function KustomizationDetail({ className }: Props) {
               </TableHead>
               <TableBody>
                 {_.map(kustomizationDetail.conditions, (c) => (
-                  <TableRow>
+                  <TableRow key={c.type}>
                     <TableCell>{c.type}</TableCell>
                     <TableCell>{c.status}</TableCell>
                     <TableCell>{c.reason}</TableCell>
