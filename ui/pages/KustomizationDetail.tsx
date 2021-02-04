@@ -20,7 +20,8 @@ import Link from "../components/Link";
 import Panel from "../components/Panel";
 import { useKubernetesContexts, useKustomizations } from "../lib/hooks";
 import { DefaultClusters, Kustomization } from "../lib/rpc/clusters";
-import { PageRoute, wrappedFetch } from "../lib/util";
+import { formatURL, PageRoute, wrappedFetch } from "../lib/util";
+import qs from "query-string";
 
 type Props = {
   className?: string;
@@ -38,11 +39,11 @@ const formatInfo = (detail: Kustomization) =>
 
 function KustomizationDetail({ className }: Props) {
   const [syncing, setSyncing] = React.useState(false);
-  const { kustomizationId } = useParams<{ kustomizationId: string }>();
+  const { kustomizationId } = qs.parse(location.search);
   const { currentContext, currentNamespace } = useKubernetesContexts();
 
   const kustomizations = useKustomizations(currentContext, currentNamespace);
-  const kustomizationDetail = kustomizations[kustomizationId];
+  const kustomizationDetail = kustomizations[kustomizationId as string];
 
   const handleSyncClicked = () => {
     const clusters = new DefaultClusters("/api/clusters", wrappedFetch);
@@ -68,11 +69,15 @@ function KustomizationDetail({ className }: Props) {
   const overrides = {
     sourceref: [
       <Link
-        route={PageRoute.Sources}
-        params={[
-          kustomizationDetail.sourcerefkind.toLowerCase(),
-          kustomizationDetail.sourceref,
-        ]}
+        to={formatURL(
+          PageRoute.SourceDetail,
+          currentContext,
+          currentNamespace,
+          {
+            sourceType: kustomizationDetail.sourcerefkind.toLowerCase(),
+            sourceId: kustomizationDetail.sourceref,
+          }
+        )}
       >
         {kustomizationDetail.sourceref}
       </Link>,

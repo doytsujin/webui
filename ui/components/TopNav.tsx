@@ -3,11 +3,12 @@ import _ from "lodash";
 import * as React from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { useKubernetesContexts } from "../lib/hooks";
-import { normalizePath, PageRoute } from "../lib/util";
+import { useKubernetesContexts, useNavigation } from "../lib/hooks";
+import { normalizePath, formatURL, PageRoute } from "../lib/util";
 import Link from "./Link";
 import Logo from "./Logo";
 import Flex from "./Flex";
+import { AllNamespacesOption } from "../lib/types";
 
 const allNamespaces = "All Namespaces";
 
@@ -67,16 +68,17 @@ function TopNav({ className }: Props) {
     setCurrentContext,
     setCurrentNamespace,
   } = useKubernetesContexts();
+  const { navigate } = useNavigation();
 
   const location = useLocation();
-  const history = useHistory();
-  const [, , pageName] = normalizePath(location.pathname);
 
   return (
     <header className={className}>
       <Flex>
         <div style={{ marginLeft: 8 }}>
-          <Link route={PageRoute.Home}>
+          <Link
+            to={formatURL(PageRoute.Home, currentContext, currentNamespace)}
+          >
             <Logo />
           </Link>
         </div>
@@ -86,11 +88,9 @@ function TopNav({ className }: Props) {
               <InputLabel id="context-selector">Context</InputLabel>
               <Select
                 onChange={(ev) => {
-                  const nextCtx = ev.target.value;
-                  setCurrentContext(nextCtx as string);
-                  history.replace(
-                    `/${nextCtx}/${currentNamespace || "all"}/${pageName}`
-                  );
+                  const nextCtx = ev.target.value as string;
+                  setCurrentContext(nextCtx);
+                  navigate(null, nextCtx, currentNamespace);
                 }}
                 value={currentContext}
                 id="context-selector"
@@ -108,11 +108,17 @@ function TopNav({ className }: Props) {
               {namespaces.length > 0 && (
                 <Select
                   onChange={(ev) => {
-                    const nextNs =
-                      ev.target.value === allNamespaces ? "" : ev.target.value;
-                    setCurrentNamespace(nextNs as string);
-                    history.replace(
-                      `/${currentContext}/${nextNs || "all"}/${pageName}`
+                    const nextNs = (ev.target.value === allNamespaces
+                      ? AllNamespacesOption
+                      : ev.target.value) as string;
+
+                    setCurrentNamespace(nextNs);
+                    navigate(null, currentContext, nextNs);
+
+                    navigate(
+                      null,
+                      currentContext,
+                      (nextNs || AllNamespacesOption) as string
                     );
                   }}
                   // Avoid a material-ui warning

@@ -1,21 +1,10 @@
-import {
-  FormControl,
-  InputLabel,
-  Menu,
-  MenuItem,
-  Select,
-  Tab,
-  Tabs,
-} from "@material-ui/core";
+import { Tab, Tabs } from "@material-ui/core";
 import _ from "lodash";
 import * as React from "react";
 import styled from "styled-components";
-import { useHistory, useLocation, useParams } from "react-router-dom";
-
-import { useKubernetesContexts } from "../lib/hooks";
-import Logo from "./Logo";
+import { useKubernetesContexts, useNavigation } from "../lib/hooks";
+import { formatURL, PageRoute } from "../lib/util";
 import Link from "./Link";
-import { normalizePath, PageRoute } from "../lib/util";
 
 type Props = {
   className?: string;
@@ -53,26 +42,23 @@ const Styled = (cmp) => styled(cmp)`
 `;
 
 function LeftNav({ className }: Props) {
-  const location = useLocation();
-  const [, , pageName] = normalizePath(location.pathname);
+  const { currentContext, currentNamespace } = useKubernetesContexts();
+  const { currentPage } = useNavigation();
 
   return (
     <div className={className}>
       <div>
         <Tabs
           centered={false}
-          // typescript explodes on this prop, but MUI says its supported
-          // @ts-ignore
-          // TabIndicatorProps={{ orientation: "horizontal" }}
           orientation="vertical"
-          value={pageName || navItems[0].value}
+          value={"/" + currentPage || navItems[0].value}
         >
           {_.map(navItems, (n) => (
             <LinkTab
               value={n.value}
               key={n.value}
               label={n.label}
-              route={n.value}
+              to={formatURL(n.value, currentContext, currentNamespace)}
             />
           ))}
         </Tabs>

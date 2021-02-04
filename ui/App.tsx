@@ -19,6 +19,10 @@ import Redirector from "./pages/Redirector";
 import SourceDetail from "./pages/SourceDetail";
 import Sources from "./pages/Sources";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Error from "./pages/Error";
+
 const AppContainer = styled.div`
   /* display: flex; */
   width: 100%;
@@ -41,9 +45,9 @@ export default function App() {
   return (
     <MuiThemeProvider theme={theme}>
       <ThemeProvider theme={theme}>
-        <AppStateProvider>
-          <GlobalStyle />
-          <Router>
+        <GlobalStyle />
+        <Router>
+          <AppStateProvider>
             <AppContainer>
               <div style={{ width: "100%" }}>
                 <TopNav />
@@ -56,51 +60,35 @@ export default function App() {
                   <ContentCotainer>
                     <Switch>
                       <Route exact path="/" component={Redirector} />
-                      <Route exact path="/:context" component={Redirector} />
+                      <Route exact path="/error" component={Error} />
                       <Route
                         exact
-                        path="/:context/:namespace"
-                        component={Redirector}
-                      />
-                      <Route
-                        exact
-                        path={prefixRoute(PageRoute.Kustomizations)}
+                        path={PageRoute.Kustomizations}
                         component={Kustomizations}
                       />
                       <Route
                         exact
-                        path={prefixRoute(
-                          PageRoute.Kustomizations,
-                          "kustomizationId"
-                        )}
-                        // path="/:context/kustomizations/:kustomizationId"
+                        path={PageRoute.KustomizationDetail}
                         component={KustomizationDetail}
                       />
                       <Route
                         exact
-                        path={prefixRoute(PageRoute.Sources)}
+                        path={PageRoute.Sources}
                         component={Sources}
                       />
                       <Route
                         exact
-                        path={prefixRoute(
-                          PageRoute.Sources,
-                          "sourceType",
-                          "sourceId"
-                        )}
+                        path={PageRoute.SourceDetail}
                         component={SourceDetail}
                       />
                       <Route
                         exact
-                        path={prefixRoute(PageRoute.HelmReleases)}
+                        path={PageRoute.HelmReleases}
                         component={HelmReleases}
                       />
                       <Route
                         exact
-                        path={prefixRoute(
-                          PageRoute.HelmReleases,
-                          "helmReleaseId"
-                        )}
+                        path={PageRoute.HelmReleaseDetail}
                         component={HelmReleaseDetail}
                       />
                       <Route exact path="*" component={() => <p>404</p>} />
@@ -108,9 +96,18 @@ export default function App() {
                   </ContentCotainer>
                 </Flex>
               </div>
+              <ToastContainer
+                position="top-center"
+                autoClose={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+              />
             </AppContainer>
-          </Router>
-        </AppStateProvider>
+          </AppStateProvider>
+        </Router>
       </ThemeProvider>
     </MuiThemeProvider>
   );

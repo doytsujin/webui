@@ -1,14 +1,14 @@
-import * as React from "react";
+import { Box } from "@material-ui/core";
 import _ from "lodash";
-import { useParams } from "react-router";
+import qs from "query-string";
+import * as React from "react";
 import styled from "styled-components";
-import { SourceType, useKubernetesContexts, useSources } from "../lib/hooks";
 import ConditionsTable from "../components/ConditionsTable";
 import Flex from "../components/Flex";
 import KeyValueTable from "../components/KeyValueTable";
-import Panel from "../components/Panel";
-import { Box } from "@material-ui/core";
 import Link from "../components/Link";
+import Panel from "../components/Panel";
+import { useKubernetesContexts, useSources } from "../lib/hooks";
 
 type Props = {
   className?: string;
@@ -47,14 +47,13 @@ const LayoutBox = styled(Box)`
 const Styled = (c) => styled(c)``;
 
 function SourceDetail({ className }: Props) {
-  const { sourceType, sourceId } = useParams<{
-    sourceType: SourceType;
-    sourceId: string;
-  }>();
+  const { sourceType, sourceId } = qs.parse(location.search);
   const { currentContext, currentNamespace } = useKubernetesContexts();
   const sources = useSources(currentContext, currentNamespace);
 
-  const sourceDetail = _.find(sources[sourceType], { name: sourceId });
+  const sourceDetail = _.find(sources[sourceType as string], {
+    name: sourceId,
+  });
 
   if (!sourceDetail) {
     return null;

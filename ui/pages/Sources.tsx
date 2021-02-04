@@ -5,7 +5,7 @@ import styled from "styled-components";
 import Link from "../components/Link";
 import Panel from "../components/Panel";
 import { SourceType, useKubernetesContexts, useSources } from "../lib/hooks";
-import { PageRoute } from "../lib/util";
+import { formatURL, PageRoute } from "../lib/util";
 
 type Props = {
   className?: string;
@@ -45,7 +45,15 @@ function Sources({ className }: Props) {
               <ul>
                 {_.map(sources[t.value], (s) => (
                   <li key={s.name}>
-                    <Link route={PageRoute.Sources} params={[t.value, s.name]}>
+                    <Link
+                      to={formatURL(
+                        PageRoute.SourceDetail,
+                        currentContext,
+                        currentNamespace,
+                        { sourceId: s.name, sourceType: s.type.toLowerCase() }
+                      )}
+                      params={[t.value, s.name]}
+                    >
                       {s.name}
                     </Link>
                   </li>

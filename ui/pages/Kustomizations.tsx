@@ -12,44 +12,51 @@ import styled from "styled-components";
 import Link from "../components/Link";
 import { useKubernetesContexts, useKustomizations } from "../lib/hooks";
 import { Kustomization } from "../lib/rpc/clusters";
-import { PageRoute } from "../lib/util";
+import { formatURL, PageRoute } from "../lib/util";
 
 type Props = {
   className?: string;
 };
 const Styled = (c) => styled(c)``;
 
-const fields: { value: string | Function; label: string }[] = [
-  {
-    value: (k: Kustomization) => (
-      <Link route={PageRoute.Kustomizations} params={[k.name]}>
-        {k.name}
-      </Link>
-    ),
-    label: "Name",
-  },
-  {
-    label: "Ready",
-    value: (k: Kustomization) => {
-      const readyCondition = _.find(k.conditions, (c) => c.type === "Ready");
-      return readyCondition.status;
-    },
-  },
-  {
-    label: "Message",
-    value: (k: Kustomization) => {
-      const readyCondition = _.find(k.conditions, (c) => c.type === "Ready");
-
-      if (readyCondition.status === "False") {
-        return readyCondition.message;
-      }
-    },
-  },
-];
-
 function Kustomizations({ className }: Props) {
   const { currentContext, currentNamespace } = useKubernetesContexts();
   const kustomizations = useKustomizations(currentContext, currentNamespace);
+
+  const fields: { value: string | Function; label: string }[] = [
+    {
+      value: (k: Kustomization) => (
+        <Link
+          to={formatURL(
+            PageRoute.KustomizationDetail,
+            currentContext,
+            currentNamespace,
+            { kustomizationId: k.name }
+          )}
+        >
+          {k.name}
+        </Link>
+      ),
+      label: "Name",
+    },
+    {
+      label: "Ready",
+      value: (k: Kustomization) => {
+        const readyCondition = _.find(k.conditions, (c) => c.type === "Ready");
+        return readyCondition.status;
+      },
+    },
+    {
+      label: "Message",
+      value: (k: Kustomization) => {
+        const readyCondition = _.find(k.conditions, (c) => c.type === "Ready");
+
+        if (readyCondition.status === "False") {
+          return readyCondition.message;
+        }
+      },
+    },
+  ];
 
   return (
     <div className={className}>
