@@ -59,9 +59,6 @@ export function useKubernetesContexts(): {
             (query.context as string) || (res.currentcontext as string);
           const ns = query.namespace || AllNamespacesOption;
 
-          if (ns == `'`) {
-            debugger;
-          }
           setCurrentContext(nextCtx);
           setCurrentNamespace(ns);
         },
@@ -109,7 +106,7 @@ type KustomizationList = { [name: string]: Kustomization };
 export function useKustomizations(
   currentContext: string,
   currentNamespace: string
-): KustomizationList {
+) {
   const { doError } = useContext(AppContext);
   const [kustomizations, setKustomizations] = useState({} as KustomizationList);
 
@@ -136,7 +133,22 @@ export function useKustomizations(
       });
   }, [currentContext, currentNamespace]);
 
-  return kustomizations;
+  const syncKustomization = (k: Kustomization) =>
+    clusters
+      .syncKustomization({
+        contextname: currentContext,
+        namespace: k.namespace,
+        withsource: false,
+        kustomizationname: k.name,
+      })
+      .then(() => {
+        setKustomizations({
+          ...kustomizations,
+          [k.name]: k,
+        });
+      });
+
+  return { kustomizations, syncKustomization };
 }
 
 export enum SourceType {

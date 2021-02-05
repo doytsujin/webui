@@ -1,5 +1,6 @@
 import _ from "lodash";
 import qs from "query-string";
+import { Context } from "./rpc/clusters";
 
 export const wrappedFetch = (url, opts: RequestInit = {}) => {
   return fetch(url, {

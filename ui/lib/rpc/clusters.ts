@@ -100,6 +100,7 @@ export interface Condition {
     status: string;
     reason: string;
     message: string;
+    timestamp: string;
     
 }
 
@@ -108,6 +109,7 @@ interface ConditionJSON {
     status: string;
     reason: string;
     message: string;
+    timestamp: string;
     
 }
 
@@ -119,6 +121,7 @@ const JSONToCondition = (m: Condition | ConditionJSON): Condition => {
         status: m.status,
         reason: m.reason,
         message: m.message,
+        timestamp: m.timestamp,
         
     };
 };
@@ -132,8 +135,8 @@ export interface Kustomization {
     conditions: Condition[];
     interval: string;
     prune: boolean;
-    reconcilerequestat: number;
-    reconcileat: number;
+    reconcilerequestat: string;
+    reconcileat: string;
     sourcerefkind: string;
     
 }
@@ -147,8 +150,8 @@ interface KustomizationJSON {
     conditions: ConditionJSON[];
     interval: string;
     prune: boolean;
-    reconcileRequestAt: number;
-    reconcileAt: number;
+    reconcileRequestAt: string;
+    reconcileAt: string;
     sourceRefKind: string;
     
 }
@@ -397,12 +400,12 @@ const SyncKustomizationReqToJSON = (m: SyncKustomizationReq): SyncKustomizationR
 };
 
 export interface SyncKustomizationRes {
-    ok: boolean;
+    kustomization: Kustomization;
     
 }
 
 interface SyncKustomizationResJSON {
-    ok: boolean;
+    kustomization: KustomizationJSON;
     
 }
 
@@ -410,7 +413,7 @@ interface SyncKustomizationResJSON {
 const JSONToSyncKustomizationRes = (m: SyncKustomizationRes | SyncKustomizationResJSON): SyncKustomizationRes => {
     
     return {
-        ok: m.ok,
+        kustomization: JSONToKustomization(m.kustomization),
         
     };
 };

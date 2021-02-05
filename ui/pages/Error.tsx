@@ -32,7 +32,7 @@ function Error({ className }: Props) {
         </Flex>
         <Flex wide center>
           <div>
-            <pre>{error && error.detail}</pre>
+            <pre>{error && error.detail.toString()}</pre>
           </div>
         </Flex>
       </Page>

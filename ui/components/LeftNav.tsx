@@ -31,6 +31,24 @@ const LinkTab = styled((props) => (
   }
 `;
 
+const getNavValue = (currentPage: any) => {
+  switch (currentPage) {
+    case "kustomizations":
+    case "kustomizations_detail":
+      return PageRoute.Kustomizations;
+    case "sources":
+    case "sources_detail":
+      return PageRoute.Sources;
+
+    case "helmreleases":
+    case "helmreleases_detail":
+      return PageRoute.HelmReleases;
+
+    default:
+      return false;
+  }
+};
+
 const Styled = (cmp) => styled(cmp)`
   #context-selector {
     min-width: 120px;
@@ -51,7 +69,7 @@ function LeftNav({ className }: Props) {
         <Tabs
           centered={false}
           orientation="vertical"
-          value={"/" + currentPage || navItems[0].value}
+          value={getNavValue(currentPage)}
         >
           {_.map(navItems, (n) => (
             <LinkTab

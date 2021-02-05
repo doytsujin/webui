@@ -1,4 +1,10 @@
-import { FormControl, InputLabel, MenuItem, Select } from "@material-ui/core";
+import {
+  FormControl,
+  InputLabel,
+  Menu,
+  MenuItem,
+  Select,
+} from "@material-ui/core";
 import _ from "lodash";
 import * as React from "react";
 import { useHistory, useLocation } from "react-router-dom";
@@ -22,15 +28,12 @@ const NavWrapper = styled(Flex)`
 `;
 
 const Styled = (c) => styled(c)`
-  /* height: 48px; */
+  padding: 8px 0;
   background-color: #3570e3;
   width: 100%;
 
   .MuiSelect-outlined {
-    padding-top: 8px;
-    padding-bottom: 8px;
     border-color: white !important;
-    /* background-color: white !important; */
 
     input {
       border-color: white !important;
@@ -57,6 +60,19 @@ const Styled = (c) => styled(c)`
   svg {
     color: white;
   }
+
+  .MuiSelect-select {
+    min-width: 120px;
+  }
+
+  label {
+    height: 42px !important;
+    transform: translate(14px, 14px) scale(1);
+  }
+
+  .MuiOutlinedInput-root {
+    height: 40px;
+  }
 `;
 
 function TopNav({ className }: Props) {
@@ -69,8 +85,6 @@ function TopNav({ className }: Props) {
     setCurrentNamespace,
   } = useKubernetesContexts();
   const { navigate } = useNavigation();
-
-  const location = useLocation();
 
   return (
     <header className={className}>
@@ -105,37 +119,42 @@ function TopNav({ className }: Props) {
             </FormControl>
             <FormControl variant="outlined">
               <InputLabel id="namespaces-selector">Namespace</InputLabel>
-              {namespaces.length > 0 && (
-                <Select
-                  onChange={(ev) => {
-                    const nextNs = (ev.target.value === allNamespaces
-                      ? AllNamespacesOption
-                      : ev.target.value) as string;
+              <Select
+                onChange={(ev) => {
+                  const nextNs = (ev.target.value === allNamespaces
+                    ? AllNamespacesOption
+                    : ev.target.value) as string;
 
-                    setCurrentNamespace(nextNs);
-                    navigate(null, currentContext, nextNs);
+                  setCurrentNamespace(nextNs);
+                  navigate(null, currentContext, nextNs);
 
-                    navigate(
-                      null,
-                      currentContext,
-                      (nextNs || AllNamespacesOption) as string
-                    );
-                  }}
-                  // Avoid a material-ui warning
-                  value={currentNamespace || allNamespaces}
-                  id="namespaces-selector"
-                  label="Namespace"
-                >
-                  {_.map(namespaces, (ns) => {
-                    const label = ns === "" ? allNamespaces : ns;
-                    return (
-                      <MenuItem value={label} key={label}>
-                        {label}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              )}
+                  navigate(
+                    null,
+                    currentContext,
+                    (nextNs || AllNamespacesOption) as string
+                  );
+                }}
+                // Avoid a material-ui warning
+                value={
+                  currentNamespace === "all"
+                    ? AllNamespacesOption
+                    : currentNamespace
+                }
+                id="namespaces-selector"
+                label="Namespace"
+              >
+                {_.map(namespaces, (ns) => {
+                  const label = ns === "" ? allNamespaces : ns;
+                  return (
+                    <MenuItem value={label} key={label}>
+                      {label}
+                    </MenuItem>
+                  );
+                })}
+                <MenuItem value={AllNamespacesOption} key={AllNamespacesOption}>
+                  {AllNamespacesOption}
+                </MenuItem>
+              </Select>
             </FormControl>
           </Flex>
         </NavWrapper>

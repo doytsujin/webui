@@ -21,7 +21,10 @@ const Styled = (c) => styled(c)``;
 
 function Kustomizations({ className }: Props) {
   const { currentContext, currentNamespace } = useKubernetesContexts();
-  const kustomizations = useKustomizations(currentContext, currentNamespace);
+  const { kustomizations } = useKustomizations(
+    currentContext,
+    currentNamespace
+  );
 
   const fields: { value: string | Function; label: string }[] = [
     {
@@ -43,7 +46,9 @@ function Kustomizations({ className }: Props) {
       label: "Ready",
       value: (k: Kustomization) => {
         const readyCondition = _.find(k.conditions, (c) => c.type === "Ready");
-        return readyCondition.status;
+        if (readyCondition) {
+          return readyCondition.status;
+        }
       },
     },
     {
@@ -51,7 +56,7 @@ function Kustomizations({ className }: Props) {
       value: (k: Kustomization) => {
         const readyCondition = _.find(k.conditions, (c) => c.type === "Ready");
 
-        if (readyCondition.status === "False") {
+        if (readyCondition && readyCondition.status === "False") {
           return readyCondition.message;
         }
       },

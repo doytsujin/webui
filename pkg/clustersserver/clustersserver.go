@@ -108,14 +108,19 @@ func namespaceOpts(ns string) *client.ListOptions {
 	return &opts
 }
 
-func convertTimestamp(stamp string) (int64, error) {
-	parsed, err := time.Parse(time.RFC3339Nano, stamp)
+func convertTimestamp(stamp string) (string, error) {
+	// parsed, err := time.Parse(time.RFC3339Nano, stamp)
 
-	if err != nil {
-		return 0, err
-	}
+	// if err != nil {
+	// 	return 0, err
+	// }
 
-	return parsed.Unix(), nil
+	// fmt.Println(parsed.String())
+	// fmt.Println(parsed.Unix())
+	// fmt.Println(time.Now().String())
+	// fmt.Println(time.Now().Unix())
+
+	return stamp, nil
 }
 
 func getSourceTypeEnum(kind string) pb.Source_Type {
@@ -125,6 +130,56 @@ func getSourceTypeEnum(kind string) pb.Source_Type {
 	}
 
 	return pb.Source_Git
+}
+
+func convertKustomization(kustomization kustomizev1.Kustomization) (*pb.Kustomization, error) {
+	reconcileRequestAt, err := convertTimestamp(kustomization.Annotations[meta.ReconcileRequestAnnotation])
+
+	if err != nil {
+		return nil, fmt.Errorf("could not parse request timestamp: %w", err)
+	}
+
+	reconcileAt, err := convertTimestamp(kustomization.Annotations[meta.ReconcileAtAnnotation])
+
+	if err != nil {
+		return nil, fmt.Errorf("could not parse reconcile timestamp: %w", err)
+	}
+
+	k := &pb.Kustomization{
+		Name:               kustomization.Name,
+		Namespace:          kustomization.Namespace,
+		TargetNamespace:    kustomization.Spec.TargetNamespace,
+		Path:               kustomization.Spec.Path,
+		SourceRef:          kustomization.Spec.SourceRef.Name,
+		SourceRefKind:      getSourceTypeEnum(kustomization.Spec.SourceRef.Kind),
+		Conditions:         []*pb.Condition{},
+		Interval:           kustomization.Spec.Interval.Duration.String(),
+		Prune:              kustomization.Spec.Prune,
+		ReconcileRequestAt: reconcileRequestAt,
+		ReconcileAt:        reconcileAt,
+	}
+
+	for _, c := range kustomization.Status.Conditions {
+		k.Conditions = append(k.Conditions, &pb.Condition{
+			Type:      c.Type,
+			Status:    string(c.Status),
+			Reason:    c.Reason,
+			Message:   c.Message,
+			Timestamp: c.LastTransitionTime.String(),
+		})
+	}
+
+	for _, c := range kustomization.Status.Conditions {
+		k.Conditions = append(k.Conditions, &pb.Condition{
+			Type:    c.Type,
+			Status:  string(c.Status),
+			Reason:  c.Reason,
+			Message: c.Message,
+		})
+	}
+
+	return k, nil
+
 }
 
 func (s *Server) ListKustomizations(ctx context.Context, msg *pb.ListKustomizationsReq) (*pb.ListKustomizationsRes, error) {
@@ -142,42 +197,12 @@ func (s *Server) ListKustomizations(ctx context.Context, msg *pb.ListKustomizati
 
 	k := []*pb.Kustomization{}
 	for _, kustomization := range result.Items {
-		reconcileRequestAt, err := convertTimestamp(kustomization.Annotations[meta.ReconcileRequestAnnotation])
-
+		m, err := convertKustomization(kustomization)
 		if err != nil {
-			return nil, fmt.Errorf("could not parse request timestamp: %w", err)
+			return nil, err
 		}
 
-		reconcileAt, err := convertTimestamp(kustomization.Annotations[meta.ReconcileAtAnnotation])
-
-		if err != nil {
-			return nil, fmt.Errorf("could not parse reconcile timestamp: %w", err)
-		}
-
-		m := pb.Kustomization{
-			Name:               kustomization.Name,
-			Namespace:          kustomization.Namespace,
-			TargetNamespace:    kustomization.Spec.TargetNamespace,
-			Path:               kustomization.Spec.Path,
-			SourceRef:          kustomization.Spec.SourceRef.Name,
-			SourceRefKind:      getSourceTypeEnum(kustomization.Spec.SourceRef.Kind),
-			Conditions:         []*pb.Condition{},
-			Interval:           kustomization.Spec.Interval.Duration.String(),
-			Prune:              kustomization.Spec.Prune,
-			ReconcileRequestAt: int32(reconcileRequestAt),
-			ReconcileAt:        int32(reconcileAt),
-		}
-
-		for _, c := range kustomization.Status.Conditions {
-			m.Conditions = append(m.Conditions, &pb.Condition{
-				Type:    c.Type,
-				Status:  string(c.Status),
-				Reason:  c.Reason,
-				Message: c.Message,
-			})
-		}
-
-		k = append(k, &m)
+		k = append(k, m)
 	}
 
 	return &pb.ListKustomizationsRes{Kustomizations: k}, nil
@@ -354,7 +379,12 @@ func (s *Server) SyncKustomization(ctx context.Context, msg *pb.SyncKustomizatio
 		return nil, err
 	}
 
-	return &pb.SyncKustomizationRes{Ok: true}, nil
+	k, err := convertKustomization(kustomization)
+
+	if err != nil {
+		return nil, err
+	}
+	return &pb.SyncKustomizationRes{Kustomization: k}, nil
 
 }
 

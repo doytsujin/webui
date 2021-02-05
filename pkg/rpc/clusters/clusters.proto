@@ -38,6 +38,7 @@ message Condition {
     string status = 2;
     string reason = 3;
     string message = 4;
+    string timestamp = 5;
 }
 
 message Kustomization {
@@ -49,8 +50,8 @@ message Kustomization {
     repeated Condition conditions = 6;
     string interval = 7;
     bool prune = 8;
-    int32 reconcileRequestAt = 9;
-    int32 reconcileAt = 10;
+    string reconcileRequestAt = 9;
+    string reconcileAt = 10;
     Source.Type sourceRefKind = 11;
 }
 
@@ -119,7 +120,7 @@ message SyncKustomizationReq {
 }
 
 message SyncKustomizationRes {
-    bool ok = 1;
+    Kustomization kustomization = 1;
 }
 message HelmRelease {
     string name = 1;

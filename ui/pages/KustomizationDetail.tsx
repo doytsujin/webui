@@ -29,7 +29,15 @@ type Props = {
 
 const Styled = (c) => styled(c)``;
 
-const infoFields = ["sourceref", "namespace", "path", "interval", "prune"];
+const infoFields = [
+  "sourceref",
+  "namespace",
+  "reconcileat",
+  "path",
+  "interval",
+  "prune",
+  "reconcilerequestat",
+];
 
 const formatInfo = (detail: Kustomization) =>
   _.map(_.pick(detail, infoFields), (v, k) => ({
@@ -42,24 +50,18 @@ function KustomizationDetail({ className }: Props) {
   const { kustomizationId } = qs.parse(location.search);
   const { currentContext, currentNamespace } = useKubernetesContexts();
 
-  const kustomizations = useKustomizations(currentContext, currentNamespace);
+  const { kustomizations, syncKustomization } = useKustomizations(
+    currentContext,
+    currentNamespace
+  );
   const kustomizationDetail = kustomizations[kustomizationId as string];
 
   const handleSyncClicked = () => {
-    const clusters = new DefaultClusters("/api/clusters", wrappedFetch);
-
     setSyncing(true);
 
-    clusters
-      .syncKustomization({
-        contextname: currentContext,
-        namespace: kustomizationDetail.namespace,
-        withsource: false,
-        kustomizationname: kustomizationDetail.name,
-      })
-      .then((res) => {
-        setSyncing(false);
-      });
+    syncKustomization(kustomizationDetail).then((res) => {
+      setSyncing(false);
+    });
   };
 
   if (!kustomizationDetail) {
@@ -83,6 +85,22 @@ function KustomizationDetail({ className }: Props) {
       </Link>,
       "Source",
     ],
+    reconcileat: [
+      ` ${new Date(
+        kustomizationDetail.reconcileat
+      ).toLocaleTimeString()} ${new Date(
+        kustomizationDetail.reconcileat
+      ).toLocaleDateString()}`,
+      "Last Reconcile",
+    ],
+    reconcilerequestat: [
+      ` ${new Date(
+        kustomizationDetail.reconcilerequestat
+      ).toLocaleTimeString()} ${new Date(
+        kustomizationDetail.reconcilerequestat
+      ).toLocaleDateString()}`,
+      "Last Reconcile Request",
+    ],
   };
 
   return (
@@ -103,7 +121,7 @@ function KustomizationDetail({ className }: Props) {
         </Flex>
         <Panel title="Info">
           <KeyValueTable
-            columns={3}
+            columns={4}
             pairs={formatInfo(kustomizationDetail)}
             overrides={overrides}
           />
@@ -118,15 +136,19 @@ function KustomizationDetail({ className }: Props) {
                 <TableRow>
                   <TableCell>Type</TableCell>
                   <TableCell>Status</TableCell>
+                  <TableCell>Timestamp</TableCell>
                   <TableCell>Reason</TableCell>
                   <TableCell>Message</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {_.map(kustomizationDetail.conditions, (c) => (
-                  <TableRow key={c.type}>
+                {_.map(kustomizationDetail.conditions, (c, i) => (
+                  <TableRow key={i}>
                     <TableCell>{c.type}</TableCell>
                     <TableCell>{c.status}</TableCell>
+                    <TableCell>
+                      {new Date(c.timestamp).toLocaleDateString()}
+                    </TableCell>
                     <TableCell>{c.reason}</TableCell>
                     <TableCell>{c.message}</TableCell>
                   </TableRow>
