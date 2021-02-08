@@ -93,61 +93,65 @@ function TopNav({ className }: Props) {
           <Flex center>
             <FormControl variant="outlined">
               <InputLabel id="context-selector">Context</InputLabel>
-              <Select
-                onChange={(ev) => {
-                  const nextCtx = ev.target.value as string;
-                  setCurrentContext(nextCtx);
-                  navigate(
-                    getNavValue(currentPage) as PageRoute,
-                    nextCtx,
-                    currentNamespace
-                  );
-                }}
-                value={currentContext}
-                id="context-selector"
-                label="Contexts"
-              >
-                {_.map(contexts, (c) => (
-                  <MenuItem value={c.name || ""} key={c.name}>
-                    {c.name}
-                  </MenuItem>
-                ))}
-              </Select>
+              {contexts.length > 0 && (
+                <Select
+                  onChange={(ev) => {
+                    const nextCtx = ev.target.value as string;
+                    setCurrentContext(nextCtx);
+                    navigate(
+                      getNavValue(currentPage) as PageRoute,
+                      nextCtx,
+                      currentNamespace
+                    );
+                  }}
+                  value={currentContext}
+                  id="context-selector"
+                  label="Contexts"
+                >
+                  {_.map(contexts, (c) => (
+                    <MenuItem value={c.name || ""} key={c.name}>
+                      {c.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
             </FormControl>
             <FormControl variant="outlined">
               <InputLabel id="namespaces-selector">Namespace</InputLabel>
-              <Select
-                onChange={(ev) => {
-                  const nextNs = (ev.target.value === allNamespaces
-                    ? AllNamespacesOption
-                    : ev.target.value) as string;
+              {namespaces && (
+                <Select
+                  onChange={(ev) => {
+                    const nextNs = (ev.target.value === allNamespaces
+                      ? AllNamespacesOption
+                      : ev.target.value) as string;
 
-                  setCurrentNamespace(nextNs);
-                  console.log(getNavValue(currentPage));
-                  navigate(
-                    getNavValue(currentPage) as PageRoute,
-                    currentContext,
-                    (nextNs || AllNamespacesOption) as string
-                  );
-                }}
-                // Avoid a material-ui warning
-                value={
-                  currentNamespace === "all"
-                    ? AllNamespacesOption
-                    : currentNamespace
-                }
-                id="namespaces-selector"
-                label="Namespace"
-              >
-                {_.map(namespaces, (ns) => {
-                  const label = ns === "" ? allNamespaces : ns;
-                  return (
-                    <MenuItem value={label} key={label}>
-                      {label}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
+                    setCurrentNamespace(nextNs);
+                    console.log(getNavValue(currentPage));
+                    navigate(
+                      getNavValue(currentPage) as PageRoute,
+                      currentContext,
+                      (nextNs || AllNamespacesOption) as string
+                    );
+                  }}
+                  // Avoid a material-ui warning
+                  value={
+                    currentNamespace === "all"
+                      ? AllNamespacesOption
+                      : currentNamespace
+                  }
+                  id="namespaces-selector"
+                  label="Namespace"
+                >
+                  {_.map(namespaces, (ns) => {
+                    const label = ns === "" ? allNamespaces : ns;
+                    return (
+                      <MenuItem value={label} key={label}>
+                        {label}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              )}
             </FormControl>
           </Flex>
         </NavWrapper>
