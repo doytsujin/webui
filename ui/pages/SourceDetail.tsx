@@ -6,7 +6,6 @@ import styled from "styled-components";
 import ConditionsTable from "../components/ConditionsTable";
 import Flex from "../components/Flex";
 import KeyValueTable from "../components/KeyValueTable";
-import Link from "../components/Link";
 import Panel from "../components/Panel";
 import { useKubernetesContexts, useSources } from "../lib/hooks";
 
@@ -74,7 +73,7 @@ function SourceDetail({ className }: Props) {
               { key: "Type", value: sourceDetail.type },
               {
                 key: "Url",
-                value: <Link to={providerUrl}>{providerUrl}</Link>,
+                value: <a href={providerUrl}>{providerUrl}</a>,
               },
             ]}
           />

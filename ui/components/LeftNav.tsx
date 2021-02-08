@@ -3,8 +3,9 @@ import _ from "lodash";
 import * as React from "react";
 import styled from "styled-components";
 import { useKubernetesContexts, useNavigation } from "../lib/hooks";
-import { formatURL, PageRoute } from "../lib/util";
+import { formatURL, getNavValue, PageRoute } from "../lib/util";
 import Link from "./Link";
+import qs from "query-string";
 
 type Props = {
   className?: string;
@@ -31,24 +32,6 @@ const LinkTab = styled((props) => (
   }
 `;
 
-const getNavValue = (currentPage: any) => {
-  switch (currentPage) {
-    case "kustomizations":
-    case "kustomizations_detail":
-      return PageRoute.Kustomizations;
-    case "sources":
-    case "sources_detail":
-      return PageRoute.Sources;
-
-    case "helmreleases":
-    case "helmreleases_detail":
-      return PageRoute.HelmReleases;
-
-    default:
-      return false;
-  }
-};
-
 const Styled = (cmp) => styled(cmp)`
   #context-selector {
     min-width: 120px;
@@ -60,7 +43,8 @@ const Styled = (cmp) => styled(cmp)`
 `;
 
 function LeftNav({ className }: Props) {
-  const { currentContext, currentNamespace } = useKubernetesContexts();
+  const query = qs.parse(location.search);
+  const { currentContext, currentNamespace } = useKubernetesContexts(query);
   const { currentPage } = useNavigation();
 
   return (

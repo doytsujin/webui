@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  Container,
   Table,
   TableBody,
   TableCell,
@@ -11,17 +10,16 @@ import {
   TableRow,
 } from "@material-ui/core";
 import _ from "lodash";
+import qs from "query-string";
 import * as React from "react";
-import { useParams } from "react-router";
 import styled from "styled-components";
 import Flex from "../components/Flex";
 import KeyValueTable from "../components/KeyValueTable";
 import Link from "../components/Link";
 import Panel from "../components/Panel";
 import { useKubernetesContexts, useKustomizations } from "../lib/hooks";
-import { DefaultClusters, Kustomization } from "../lib/rpc/clusters";
-import { formatURL, PageRoute, wrappedFetch } from "../lib/util";
-import qs from "query-string";
+import { Kustomization } from "../lib/rpc/clusters";
+import { formatURL, PageRoute } from "../lib/util";
 
 type Props = {
   className?: string;
@@ -47,14 +45,14 @@ const formatInfo = (detail: Kustomization) =>
 
 function KustomizationDetail({ className }: Props) {
   const [syncing, setSyncing] = React.useState(false);
-  const { kustomizationId } = qs.parse(location.search);
+  const query = qs.parse(location.search);
   const { currentContext, currentNamespace } = useKubernetesContexts();
 
   const { kustomizations, syncKustomization } = useKustomizations(
     currentContext,
     currentNamespace
   );
-  const kustomizationDetail = kustomizations[kustomizationId as string];
+  const kustomizationDetail = kustomizations[query.kustomizationId as string];
 
   const handleSyncClicked = () => {
     setSyncing(true);

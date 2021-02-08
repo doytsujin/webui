@@ -1,11 +1,11 @@
 import { Box } from "@material-ui/core";
+import qs from "query-string";
 import * as React from "react";
-import { useParams } from "react-router";
 import styled from "styled-components";
 import Flex from "../components/Flex";
 import KeyValueTable from "../components/KeyValueTable";
 import Panel from "../components/Panel";
-import { useHelmReleases } from "../lib/hooks";
+import { useHelmReleases, useKubernetesContexts } from "../lib/hooks";
 
 type Props = {
   className?: string;
@@ -22,9 +22,10 @@ const Styled = (c) => styled(c)`
 `;
 
 function HelmReleaseDetail({ className }: Props) {
-  const { helmReleaseId } = useParams<{ helmReleaseId: string }>();
-  const helmReleases = useHelmReleases();
-  const helmRelease = helmReleases[helmReleaseId];
+  const query = qs.parse(location.search);
+  const { currentContext, currentNamespace } = useKubernetesContexts();
+  const helmReleases = useHelmReleases(currentContext, currentNamespace);
+  const helmRelease = helmReleases[query.helmReleaseId as string];
 
   if (!helmRelease) {
     return null;
@@ -32,7 +33,7 @@ function HelmReleaseDetail({ className }: Props) {
 
   return (
     <div className={className}>
-      <h2>{helmReleaseId}</h2>
+      <h2>{query.helmReleaseId}</h2>
       <Box m={2}>
         <Flex wide>
           <Panel title="Info">

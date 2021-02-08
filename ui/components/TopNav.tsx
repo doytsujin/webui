@@ -1,20 +1,13 @@
-import {
-  FormControl,
-  InputLabel,
-  Menu,
-  MenuItem,
-  Select,
-} from "@material-ui/core";
+import { FormControl, InputLabel, MenuItem, Select } from "@material-ui/core";
 import _ from "lodash";
 import * as React from "react";
-import { useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useKubernetesContexts, useNavigation } from "../lib/hooks";
-import { normalizePath, formatURL, PageRoute } from "../lib/util";
+import { AllNamespacesOption } from "../lib/types";
+import { formatURL, getNavValue, PageRoute } from "../lib/util";
+import Flex from "./Flex";
 import Link from "./Link";
 import Logo from "./Logo";
-import Flex from "./Flex";
-import { AllNamespacesOption } from "../lib/types";
 
 const allNamespaces = "All Namespaces";
 
@@ -84,7 +77,7 @@ function TopNav({ className }: Props) {
     setCurrentContext,
     setCurrentNamespace,
   } = useKubernetesContexts();
-  const { navigate } = useNavigation();
+  const { navigate, currentPage } = useNavigation();
 
   return (
     <header className={className}>
@@ -104,7 +97,11 @@ function TopNav({ className }: Props) {
                 onChange={(ev) => {
                   const nextCtx = ev.target.value as string;
                   setCurrentContext(nextCtx);
-                  navigate(null, nextCtx, currentNamespace);
+                  navigate(
+                    getNavValue(currentPage) as PageRoute,
+                    nextCtx,
+                    currentNamespace
+                  );
                 }}
                 value={currentContext}
                 id="context-selector"
@@ -126,10 +123,9 @@ function TopNav({ className }: Props) {
                     : ev.target.value) as string;
 
                   setCurrentNamespace(nextNs);
-                  navigate(null, currentContext, nextNs);
-
+                  console.log(getNavValue(currentPage));
                   navigate(
-                    null,
+                    getNavValue(currentPage) as PageRoute,
                     currentContext,
                     (nextNs || AllNamespacesOption) as string
                   );
@@ -151,9 +147,6 @@ function TopNav({ className }: Props) {
                     </MenuItem>
                   );
                 })}
-                <MenuItem value={AllNamespacesOption} key={AllNamespacesOption}>
-                  {AllNamespacesOption}
-                </MenuItem>
               </Select>
             </FormControl>
           </Flex>

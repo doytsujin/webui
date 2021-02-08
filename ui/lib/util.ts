@@ -51,3 +51,21 @@ export enum PageRoute {
   HelmReleaseDetail = "/helmreleases_detail",
   Error = "/error",
 }
+
+export const getNavValue = (currentPage: any): PageRoute | boolean => {
+  switch (currentPage) {
+    case "kustomizations":
+    case "kustomizations_detail":
+      return PageRoute.Kustomizations;
+    case "sources":
+    case "sources_detail":
+      return PageRoute.Sources;
+
+    case "helmreleases":
+    case "helmreleases_detail":
+      return PageRoute.HelmReleases;
+
+    default:
+      return false;
+  }
+};

@@ -1,9 +1,3 @@
-import * as React from "react";
-import _ from "lodash";
-import styled from "styled-components";
-import { useHelmReleases } from "../lib/hooks";
-import Link from "../components/Link";
-import { PageRoute } from "../lib/util";
 import {
   Table,
   TableBody,
@@ -12,26 +6,40 @@ import {
   TableHead,
   TableRow,
 } from "@material-ui/core";
+import _ from "lodash";
+import * as React from "react";
+import styled from "styled-components";
+import Link from "../components/Link";
+import { useHelmReleases, useKubernetesContexts } from "../lib/hooks";
 import { HelmRelease } from "../lib/rpc/clusters";
+import { formatURL, PageRoute } from "../lib/util";
 
 type Props = {
   className?: string;
 };
 const Styled = (c) => styled(c)``;
 
-const fields: { value: string | Function; label: string }[] = [
-  {
-    value: (h: HelmRelease) => (
-      <Link route={PageRoute.HelmReleases} params={[h.name]}>
-        {h.name}
-      </Link>
-    ),
-    label: "Name",
-  },
-];
-
 function HelmRelease({ className }: Props) {
-  const helmReleases = useHelmReleases();
+  const { currentContext, currentNamespace } = useKubernetesContexts();
+  const helmReleases = useHelmReleases(currentContext, currentNamespace);
+
+  const fields: { value: string | Function; label: string }[] = [
+    {
+      value: (h: HelmRelease) => (
+        <Link
+          to={formatURL(
+            PageRoute.HelmReleaseDetail,
+            currentContext,
+            currentNamespace,
+            { helmReleaseId: h.name }
+          )}
+        >
+          {h.name}
+        </Link>
+      ),
+      label: "Name",
+    },
+  ];
 
   return (
     <div className={className}>
